@@ -1,58 +1,50 @@
+// --- GLOBAL DEĞİŞKENLER ---
+const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
+const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
 
-document.addEventListener('DOMContentLoaded', () => {
+// Çeviriler, AI Mesajları ve News Data (Senin kodundan aynen kopyala...)
+const I18N = { /* ... senin dil verilerin ... */ };
+
+let state = {
+    rates: {}, baseCurrency: localStorage.getItem('baseCurr') || 'PLN', chartPair: 'USD',
+    lang: localStorage.getItem('lang') || 'auto', theme: localStorage.getItem('theme') || '#4f46e5',
+    favs: JSON.parse(localStorage.getItem('favs_v8')) || ['USD', 'EUR', 'GBP', 'GEL'],
+    cryptoFavs: JSON.parse(localStorage.getItem('crypto_v8')) || ['BTC', 'ETH', 'SOL'],
+    portfolio: JSON.parse(localStorage.getItem('portfolio')) || [],
+    neonEnabled: localStorage.getItem('neonEnabled') !== 'false'
+};
+
+let charts = {}; let intervals = {};
+
+// --- BAŞLATMA ---
+window.onload = async () => {
     lucide.createIcons();
+    initLanguage();
+    setTheme(state.theme);
+    initChart('mainChart', state.theme);
+    
+    // VERİ ÇEKME (VERCEL PROXY KULLANARAK)
+    await fetchData();
+    
+    updateUI();
+    startLiveSimulations();
+    startNewsTicker();
+};
 
-    const splash = document.getElementById('splash');
-    const splashVideo = document.getElementById('splash-video');
-    const neonOverlay = document.querySelector('.neon-overlay');
-    const appContainer = document.getElementById('app-container');
-
-    // Video oynatmaya başlar başlamaz neon overlay'i gizle
-    splashVideo.addEventListener('playing', () => {
-        neonOverlay.style.opacity = '0';
-    });
-
-    // Video bitince veya belirli bir süre sonra splash ekranı kapat
-    const splashDuration = 3500; // 3.5 saniye
-    setTimeout(() => {
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            splash.style.display = 'none';
-            appContainer.style.display = 'block'; // Uygulama içeriğini görünür yap
-            loadData(); // Verileri yüklemeye başla
-        }, 800); // Opaklık geçişi süresi
-    }, splashDuration);
-
-    // Navigasyon butonları
-    document.querySelectorAll('.nav-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            // İlgili sayfa içeriğini burada gösterebiliriz
-            // Örneğin: const pageId = e.currentTarget.dataset.page;
-            // document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            // document.getElementById(pageId).classList.add('active');
-        });
-    });
-});
-
-async function loadData() {
+// --- GÜVENLİ VERİ ÇEKME (VERCEL BAĞLANTISI) ---
+async function fetchData() {
     try {
+        // Artık direkt FastForex yerine bizim Vercel Proxy'mize gidiyoruz
+        // Bu sayede API anahtarın gizli kalıyor.
         const res = await fetch('/api/proxy?type=forex');
         const data = await res.json();
-        const tryVal = data.results.TRY;
-
-        document.getElementById('usd-val').innerText = (1 / data.results.USD * tryVal).toFixed(2);
-        document.getElementById('eur-val').innerText = (1 / data.results.EUR * tryVal).toFixed(2);
-        
-        const goldRes = await fetch('/api/proxy?type=gold&symbol=XAU');
-        const goldData = await goldRes.json();
-        document.getElementById('gold-val').innerText = (goldData.price * tryVal).toFixed(0) + " ₺";
-
-    } catch (error) {
-        console.error("Veri hatası:", error);
-        document.getElementById('usd-val').innerText = "N/A";
-        document.getElementById('eur-val').innerText = "N/A";
-        document.getElementById('gold-val').innerText = "N/A";
+        state.rates = data.results;
+    } catch(e) {
+        console.error("API Bağlantı Hatası:", e);
     }
 }
+
+// --- DİĞER FONKSİYONLAR (Senin kodundaki logicler buraya gelecek) ---
+function nav(page) { /* ... sayfa geçiş kodları ... */ }
+function renderGrid() { /* ... grid çizim kodları ... */ }
+// ... (Senin yazdığın tüm selector, portfolio ve chart fonksiyonları buraya eklenecek)
