@@ -1,90 +1,333 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Grafer Pro V18</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether Weather V16 - Unstoppable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-[#020617] text-white overflow-hidden select-none">
-
-    <div id="splash">
-        <video autoplay muted loop playsinline id="splash-video" class="absolute inset-0 w-full h-full object-cover opacity-50">
-            <source src="intro.mp4" type="video/mp4">
-            Tarayıcınız video etiketini desteklemiyor.
-        </video>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        :root { --theme-color: #4f46e5; }
         
-        <div class="neon-overlay"></div>
+        body { font-family: 'Inter', sans-serif; transition: background 0.8s ease; }
+        .backdrop-blur-xl { backdrop-filter: blur(20px); }
+        .hourly-scroll::-webkit-scrollbar { display: none; }
 
-        <div class="relative z-10 text-center">
-            <div class="logo-box animate-bounce">
-                <i data-lucide="zap" size="48" class="text-white"></i>
+        /* Dynamic Backgrounds */
+        .bg-day-clear { background: linear-gradient(to top, #6DD5FA, #2980B9); }
+        .bg-night-clear { background: linear-gradient(to top, #0F2027, #203A43, #2C5364); }
+        .bg-day-cloudy { background: linear-gradient(to top, #BBD2C5, #536976); }
+        .bg-night-cloudy { background: linear-gradient(to top, #3C3B3F, #605C3C); }
+        .bg-rain { background: linear-gradient(to top, #093028, #237A57); }
+        .bg-snow { background: linear-gradient(to top, #E6DADA, #274046); }
+
+        /* Neon Effect */
+        .neon-active .neon-box { position: relative; border: 1px solid transparent; animation: borderGlow 4s infinite ease-in-out; }
+        @keyframes borderGlow { 
+            0%, 100% { border-color: color-mix(in srgb, var(--theme-color), transparent 70%); box-shadow: 0 0 5px color-mix(in srgb, var(--theme-color), transparent 90%); } 
+            50% { border-color: var(--theme-color); box-shadow: 0 0 15px color-mix(in srgb, var(--theme-color), transparent 60%); } 
+        }
+        .neon-box { border: 1px solid rgba(255, 255, 255, 0.1); }
+        .dark .neon-box { border: 1px solid rgba(255, 255, 255, 0.1); }
+        html:not(.dark) .neon-box { border: 1px solid rgba(0, 0, 0, 0.1); }
+        
+        .toggle-checkbox:checked ~ .toggle-slot { background-color: var(--theme-color); }
+        .toggle-checkbox:checked ~ .toggle-slot .toggle-button { transform: translateX(100%); }
+        
+        .theme-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+        .theme-dot.active { border-color: white; box-shadow: 0 0 0 2px var(--theme-color); transform: scale(1.1); }
+        html:not(.dark) .theme-dot.active { border-color: #333; }
+    </style>
+</head>
+<body class="text-white bg-gray-900">
+
+    <div id="overlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-white/10 transform -translate-x-full flex flex-col shadow-2xl z-50 transition-transform duration-300 text-gray-800 dark:text-white">
+        <div class="p-4 bg-gray-100 dark:bg-black/20 flex justify-between items-center">
+            <span class="font-bold text-lg tracking-tight flex items-center gap-2">Aether Weather</span>
+            <button onclick="toggleSidebar(false)"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="flex-1 p-4 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-400 mb-3 uppercase" data-i18n="theme_color">Tema Rengi</label>
+                <div class="flex justify-between items-center px-2">
+                    <div onclick="setTheme('#4f46e5')" class="theme-dot bg-indigo-600 active"></div>
+                    <div onclick="setTheme('#8b5cf6')" class="theme-dot bg-purple-500"></div>
+                    <div onclick="setTheme('#10b981')" class="theme-dot bg-emerald-500"></div>
+                    <div onclick="setTheme('#f97316')" class="theme-dot bg-orange-500"></div>
+                    <div onclick="setTheme('#ef4444')" class="theme-dot bg-red-500"></div>
+                </div>
             </div>
-            <h1 class="text-5xl font-black tracking-[0.2em] mb-2">GRAFER</h1>
-            <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-[0.4em]">Professional Finance</p>
-        </div>
+            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-black/20 rounded-xl">
+                <span class="flex items-center gap-2 font-bold text-sm"><i data-lucide="moon" size="18"></i> <span data-i18n="dark_mode">Gece Modu</span></span>
+                <label class="relative inline-block w-12 h-6 cursor-pointer"><input type="checkbox" id="dark-mode-toggle" class="toggle-checkbox sr-only"><span class="toggle-slot absolute inset-0 bg-gray-300 dark:bg-gray-700 rounded-full"><span class="toggle-button absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"></span></span></label>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-black/20 rounded-xl">
+                <span class="flex items-center gap-2 font-bold text-sm text-[var(--theme-color)]"><i data-lucide="sparkles" size="18"></i> Neon Efekt</span>
+                <label class="relative inline-block w-12 h-6 cursor-pointer"><input type="checkbox" id="neon-toggle" class="toggle-checkbox sr-only" checked><span class="toggle-slot absolute inset-0 bg-gray-300 dark:bg-gray-700 rounded-full"><span class="toggle-button absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"></span></span></label>
+            </div>
+        </nav>
+    </aside>
 
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
-        <p class="absolute bottom-10 text-[9px] font-bold text-white/30 uppercase tracking-widest">Sistem Verileri Kontrol Ediliyor</p>
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500 bg-gray-900">
+        <i data-lucide="sun-moon" class="w-24 h-24 animate-pulse" style="color:var(--theme-color)"></i>
+        <p class="mt-4 text-lg font-semibold" data-i18n="loading">Konum bulunuyor...</p>
     </div>
 
-    <div id="app-container" style="display: none;">
-        <header class="fixed top-0 w-full z-40 px-6 py-4 flex justify-between items-center glass-header">
-            <div>
-                <span class="text-[9px] font-bold text-indigo-400 uppercase tracking-wider block">V18.0.5 PRO</span>
-                <span class="font-bold text-xl" id="header-title">Piyasa</span>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="location.reload()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                    <i data-lucide="refresh-cw" size="18"></i>
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="min-h-screen w-full p-4 md:p-6 lg:p-8 opacity-0 transition-opacity duration-500">
+        <header class="flex items-center justify-between mb-6 gap-2">
+            <button onclick="toggleSidebar(true)" class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white/10 rounded-full"><i data-lucide="menu"></i></button>
+            <div class="relative w-full max-w-sm flex items-center gap-2">
+                <div class="relative w-full">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50"></i>
+                    <input type="text" id="search-input" placeholder="Şehir Ara..." data-i18n-placeholder="search_city" class="w-full bg-white/10 placeholder:text-white/50 text-white pl-10 pr-4 py-2 rounded-full outline-none focus:ring-2 ring-white/50 transition">
+                </div>
+                <!-- LOCATION BUTTON -->
+                <button onclick="forceLocation()" class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white/10 rounded-full hover:bg-white/20 transition active:scale-95" title="Konumumu Bul">
+                    <i data-lucide="crosshair" class="text-[var(--theme-color)]"></i>
                 </button>
+            </div>
+             <div class="relative">
+                <button onclick="toggleLangMenu()" class="w-10 h-10 flex items-center justify-center bg-white/10 rounded-full"><i data-lucide="globe"></i></button>
+                <div id="lang-dropdown" class="absolute right-0 top-12 w-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl shadow-xl border border-gray-200/50 dark:border-white/10 hidden flex-col p-1 z-50 text-gray-800 dark:text-white">
+                    <button onclick="setLanguage('tr')" class="flex items-center gap-3 p-2 hover:bg-black/5 rounded-lg text-sm font-bold"><img src="https://flagcdn.com/w40/tr.png" class="w-5 rounded"> Türkçe</button>
+                    <button onclick="setLanguage('en')" class="flex items-center gap-3 p-2 hover:bg-black/5 rounded-lg text-sm font-bold"><img src="https://flagcdn.com/w40/gb.png" class="w-5 rounded"> English</button>
+                    <button onclick="setLanguage('ru')" class="flex items-center gap-3 p-2 hover:bg-black/5 rounded-lg text-sm font-bold"><img src="https://flagcdn.com/w40/ru.png" class="w-5 rounded"> Русский</button>
+                    <button onclick="setLanguage('pl')" class="flex items-center gap-3 p-2 hover:bg-black/5 rounded-lg text-sm font-bold"><img src="https://flagcdn.com/w40/pl.png" class="w-5 rounded"> Polski</button>
+                    <button onclick="setLanguage('ka')" class="flex items-center gap-3 p-2 hover:bg-black/5 rounded-lg text-sm font-bold"><img src="https://flagcdn.com/w40/ge.png" class="w-5 rounded"> ქართული</button>
+                </div>
             </div>
         </header>
 
-        <main id="page-market" class="page active px-6 pt-28">
-            <div class="grid grid-cols-1 gap-4">
-                <div class="hero-card bg-gradient-to-br from-indigo-600 to-purple-700">
-                    <span class="text-xs font-bold opacity-70 uppercase">Dolar / TL</span>
-                    <div class="text-5xl font-black mt-2" id="usd-val">00.00</div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="bg-green-500/20 text-green-400 text-[10px] font-bold px-2 py-1 rounded">CANLI</span>
-                    </div>
-                </div>
+        <section class="text-center mb-8">
+            <h1 id="city-name" class="text-3xl font-bold">...</h1>
+            <p id="date-time" class="text-sm text-white/80">...</p>
+            <div class="flex items-center justify-center my-4">
+                <i id="main-weather-icon" data-lucide="cloud-sun" class="w-32 h-32 drop-shadow-lg"></i>
+                <p id="current-temp" class="text-8xl font-extrabold ml-4">--°</p>
             </div>
-            
-            <div class="mt-8 space-y-3">
-                <h3 class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Diğer Enstrümanlar</h3>
-                <div class="item-row glass">
-                    <span class="font-bold">Euro / TRY</span>
-                    <span class="font-mono font-bold" id="eur-val">--.--</span>
-                </div>
-                <div class="item-row glass">
-                    <span class="font-bold">Gram Altın</span>
-                    <span class="font-mono font-bold" id="gold-val">----</span>
-                </div>
-            </div>
-        </main>
+             <p id="weather-description" class="text-lg text-white/80 font-semibold" data-i18n="partly_cloudy">...</p>
+        </section>
 
-        <nav class="fixed bottom-0 w-full glass-nav flex justify-around items-center pb-[env(safe-area-inset-bottom)] h-20 px-4">
-            <button class="nav-btn active"><i data-lucide="layout-grid"></i></button>
-            <button class="nav-btn"><i data-lucide="bar-chart-2"></i></button>
-            <div class="relative -top-6">
-                <button class="w-14 h-14 bg-indigo-600 rounded-2xl rotate-45 flex items-center justify-center shadow-lg shadow-indigo-500/40 border-4 border-[#020617]">
-                    <i data-lucide="arrow-left-right" class="-rotate-45 text-white"></i>
-                </button>
+        <!-- CARDS -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 text-sm">
+            <div class="col-span-2 lg:col-span-4 bg-white/10 backdrop-blur-xl p-4 rounded-2xl grid grid-cols-2 md:grid-cols-4 gap-4 neon-box">
+                 <div class="text-center"><p class="text-white/60" data-i18n="feels_like">Hissedilen</p><p id="feels-like-temp" class="font-bold text-lg">--°</p></div>
+                 <div class="text-center"><p class="text-white/60" data-i18n="wind">Rüzgar</p><p id="wind-speed" class="font-bold text-lg">-- km/s</p></div>
+                 <div class="text-center"><p class="text-white/60" data-i18n="rain_chance">Yağmur İht.</p><p id="rain-chance" class="font-bold text-lg">--%</p></div>
+                 <div class="text-center"><p class="text-white/60" data-i18n="uv_index">UV İndeksi</p><p id="uv-index" class="font-bold text-lg">--</p></div>
             </div>
-            <button class="nav-btn"><i data-lucide="cloud-sun"></i></button>
-            <button class="nav-btn"><i data-lucide="settings"></i></button>
-        </nav>
-    </div>
+            <!-- Air Quality -->
+            <div id="aqi-card" class="col-span-2 lg:col-span-4 bg-white/10 backdrop-blur-xl p-4 rounded-2xl flex justify-between items-center neon-box">
+                <div>
+                    <p class="text-white/60" data-i18n="air_quality">Hava Kalitesi</p>
+                    <p id="aqi-text" class="font-bold text-lg">...</p>
+                </div>
+                <p id="aqi-value" class="text-3xl font-extrabold">--</p>
+            </div>
+        </section>
 
-    <script src="app.js"></script>
+        <section class="bg-white/10 backdrop-blur-xl p-4 rounded-2xl mb-8 neon-box">
+            <h3 class="font-bold mb-4 text-white/80" data-i18n="hourly_forecast">Saatlik Tahmin</h3>
+            <div id="hourly-forecast-container" class="flex gap-4 overflow-x-auto hourly-scroll"></div>
+        </section>
+        
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white/10 backdrop-blur-xl p-4 rounded-2xl neon-box">
+                <h3 class="font-bold mb-2 text-white/80" data-i18n="daily_forecast">5 Günlük Tahmin</h3>
+                <div id="daily-forecast-container" class="space-y-2"></div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-xl p-4 rounded-2xl flex flex-col justify-around neon-box">
+                <div class="flex items-center gap-4"><i data-lucide="sunrise" class="w-10 h-10 text-yellow-300"></i><div><p class="text-white/60" data-i18n="sunrise">Gündoğumu</p><p id="sunrise-time" class="font-bold text-2xl">--:--</p></div></div>
+                <div class="flex items-center gap-4"><i data-lucide="sunset" class="w-10 h-10 text-orange-400"></i><div><p class="text-white/60" data-i18n="sunset">Günbatımı</p><p id="sunset-time" class="font-bold text-2xl">--:--</p></div></div>
+            </div>
+        </section>
+    </main>
+
+<script>
+const I18N = {
+    tr: { loading: "Konum bulunuyor...", search_city: "Şehir Ara...", high: "Y", low: "D", feels_like: "Hissedilen", wind: "Rüzgar", rain_chance: "Yağmur İht.", uv_index: "UV İndeksi", hourly_forecast: "Saatlik Tahmin", daily_forecast: "5 Günlük Tahmin", sunrise: "Gündoğumu", sunset: "Günbatımı", air_quality: "Hava Kalitesi", days: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"], aqi: {good: "İyi", moderate: "Orta", unhealthy_sensitive: "Hassas", unhealthy: "Sağlıksız", very_unhealthy: "Çok Sağlıksız", hazardous: "Tehlikeli"}, weather: { 0: "Açık", 1: "Çoğunlukla Açık", 2: "Parçalı Bulutlu", 3: "Kapalı", 45: "Sisli", 61: "Hafif Yağmurlu", 63: "Yağmurlu", 71: "Hafif Karlı", 73: "Karlı", 80: "Sağanak Yağış", 95: "Fırtınalı" } },
+    en: { loading: "Locating...", search_city: "Search City...", high: "H", low: "L", feels_like: "Feels Like", wind: "Wind", rain_chance: "Rain Chance", uv_index: "UV Index", hourly_forecast: "Hourly Forecast", daily_forecast: "5-Day Forecast", sunrise: "Sunrise", sunset: "Sunset", air_quality: "Air Quality", days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], aqi: {good: "Good", moderate: "Moderate", unhealthy_sensitive: "Unhealthy for Sensitive", unhealthy: "Unhealthy", very_unhealthy: "Very Unhealthy", hazardous: "Hazardous"}, weather: { 0: "Clear", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast", 45: "Fog", 61: "Slight Rain", 63: "Rain", 71: "Slight Snow", 73: "Snow", 80: "Showers", 95: "Thunderstorm" } },
+    ru: { loading: "Поиск местоположения...", search_city: "Поиск города...", high: "В", low: "Н", feels_like: "Ощущается", wind: "Ветер", rain_chance: "Вероятность дождя", uv_index: "УФ-индекс", hourly_forecast: "Почасовой прогноз", daily_forecast: "Прогноз на 5 дней", sunrise: "Восход", sunset: "Закат", air_quality: "Качество воздуха", days: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Чт", "Пт", "Сб"], aqi: {good: "Хорошее", moderate: "Умеренное", unhealthy: "Нездоровое"}, weather: { 0: "Ясно", 1: "В основном ясно", 2: "Переменная облачность", 3: "Пасмурно", 45: "Туман", 61: "Небольшой дождь", 63: "Дождь", 71: "Небольшой снег", 73: "Снег", 80: "Ливни", 95: "Гроза" } },
+    pl: { loading: "Lokalizowanie...", search_city: "Szukaj miasta...", high: "W", low: "N", feels_like: "Odczuwalna", wind: "Wiatr", rain_chance: "Szansa deszczu", uv_index: "Indeks UV", hourly_forecast: "Prognoza godzinowa", daily_forecast: "Prognoza na 5 dni", sunrise: "Wschód słońca", sunset: "Zachód słońca", air_quality: "Jakość powietrza", days: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"], aqi: {good: "Dobra", moderate: "Umiarkowana", unhealthy: "Niezdrowa"}, weather: { 0: "Czysto", 1: "Głównie czysto", 2: "Częściowe zachmurzenie", 3: "Zachmurzenie", 45: "Mgła", 61: "Lekki deszcz", 63: "Deszcz", 71: "Lekki śnieg", 73: "Śnieg", 80: "Przelotne opady", 95: "Burza" } },
+    ka: { loading: "ადგილმდებარეობის ძიება...", search_city: "ქალაქის ძებნა...", high: "მ", low: "დ", feels_like: "შეგრძნება", wind: "ქარი", rain_chance: "წვიმის შანსი", uv_index: "UV ინდექსი", hourly_forecast: "საათობრივი პროგნოზი", daily_forecast: "5 დღის პროგნოზი", sunrise: "მზის ამოსვლა", sunset: "მზის ჩასვლა", air_quality: "ჰაერის ხარისხი", days: ["კვირა", "ორშაბათი", "სამშაბათი", "ოთხშაბათი", "ხუთშაბათი", "პარასკევი", "შაბათი"], aqi: {good: "კარგი", moderate: "საშუალო", unhealthy: "არაჯანსაღი"}, weather: { 0: "სუფთა", 1: "ძირითადად სუფთა", 2: "ნაწილობრივ ღრუბლიანი", 3: "მოღრუბლული", 45: "ნისლი", 61: "მსუბუქი წვიმა", 63: "წვიმა", 71: "მსუბუქი თოვლი", 73: "თოვლი", 80: "ხანმოკლე წვიმა", 95: "ჭექა-ქუხილი" } },
+};
+
+let state = {
+    lang: 'tr',
+    darkMode: true,
+    neonEnabled: true,
+    theme: '#4f46e5',
+    clockInterval: null,
+    isLoaded: false
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    loadState();
+    
+    document.getElementById('search-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') { fetchGeocode(e.target.value); e.target.blur(); } });
+    document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
+    document.getElementById('neon-toggle').addEventListener('change', toggleNeon);
+    
+    // START HYBRID LOCATION SYSTEM
+    initLocation();
+});
+
+// --- HYBRID LOCATION LOGIC (THE FIX) ---
+function initLocation() {
+    showLoading();
+    // 1. Try Browser GPS
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // Success: Get City Name
+                fetchReverseGeocode(position.coords.latitude, position.coords.longitude);
+            },
+            (error) => {
+                // Fail/Deny: Fallback to IP Location
+                console.log("GPS Denied, using IP Location...");
+                fetchIPLocation();
+            },
+            { timeout: 5000 } // Wait max 5 seconds for GPS
+        );
+    } else {
+        fetchIPLocation();
+    }
+}
+
+function forceLocation() {
+    state.isLoaded = false;
+    initLocation();
+}
+
+async function fetchIPLocation() {
+    try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error("IP API failed");
+        const data = await response.json();
+        // Use IP Coordinates
+        fetchWeather(data.latitude, data.longitude, `${data.city}, ${data.country_name}`);
+    } catch (e) {
+        console.error("IP Location Failed, using default...");
+        fetchGeocode("Istanbul"); // Ultimate Fallback
+    }
+}
+
+// --- REST OF THE APP ---
+
+function loadState() {
+    state.lang = localStorage.getItem('lang') || (['tr','en','ru','pl','ka'].includes(navigator.language.slice(0, 2)) ? navigator.language.slice(0, 2) : 'en');
+    state.theme = localStorage.getItem('theme') || '#4f46e5';
+    state.neonEnabled = localStorage.getItem('neonEnabled') !== 'false';
+    const savedDarkMode = localStorage.getItem('darkMode');
+    state.darkMode = savedDarkMode === null ? true : savedDarkMode === 'true'; 
+
+    setLanguage(state.lang);
+    setTheme(state.theme);
+    updateNeon(state.neonEnabled);
+    updateDarkMode(state.darkMode);
+}
+
+async function fetchGeocode(city) { 
+    showLoading(); 
+    try { 
+        const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=${state.lang}&format=json`); 
+        const data = await response.json(); 
+        if(data.results && data.results.length > 0) { 
+            const { latitude, longitude, name, admin1, country } = data.results[0]; 
+            fetchWeather(latitude, longitude, `${name}, ${country}`); 
+        } else { 
+            alert("City not found"); hideLoading(); 
+        } 
+    } catch (error) { 
+        console.error("Geocoding Error:", error); hideLoading(); 
+    } 
+}
+
+async function fetchReverseGeocode(lat, lon) {
+    try {
+        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${state.lang}`);
+        const data = await response.json();
+        const city = data.city || data.locality || "Konum";
+        const country = data.countryName || "";
+        fetchWeather(lat, lon, `${city}, ${country}`);
+    } catch(e) {
+        fetchWeather(lat, lon, "Konumunuz"); 
+    }
+}
+
+async function fetchWeather(lat, lon, locationName = null) { 
+    try { 
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=6&timezone=auto&european_aqi`; 
+        const response = await fetch(apiUrl); 
+        const data = await response.json(); 
+        updateUI(data, locationName); 
+        state.isLoaded = true;
+    } catch (error) { 
+        console.error("Weather Fetch Error:", error); 
+    } finally { 
+        hideLoading(); 
+    } 
+}
+
+function updateUI(data, locationName) {
+    const { current, daily, hourly } = data;
+    const weatherInfo = getWeatherInfo(current.weather_code, current.is_day);
+    
+    document.body.className = `${state.darkMode ? 'dark' : ''} text-gray-800 dark:text-white ${weatherInfo.bgClass}`;
+    if(locationName) document.getElementById('city-name').innerText = locationName;
+    updateClock();
+    
+    document.getElementById('weather-description').innerText = I18N[state.lang].weather[current.weather_code] || '...';
+    document.getElementById('main-weather-icon').setAttribute('data-lucide', weatherInfo.icon);
+    document.getElementById('current-temp').innerText = `${Math.round(current.temperature_2m)}°`;
+    document.getElementById('feels-like-temp').innerText = `${Math.round(current.apparent_temperature)}°`;
+    document.getElementById('wind-speed').innerText = `${Math.round(current.wind_speed_10m)} km/s`;
+    
+    const now = new Date();
+    const currentHour = now.getHours();
+    document.getElementById('rain-chance').innerText = `${hourly.precipitation_probability[currentHour]}%`;
+    document.getElementById('uv-index').innerText = Math.round(hourly.uv_index[currentHour] ?? 0);
+    
+    const aqiValue = data.current.european_aqi;
+    const aqiInfo = getAqiInfo(aqiValue);
+    document.getElementById('aqi-card').className = `col-span-2 lg:col-span-4 p-4 rounded-2xl flex justify-between items-center neon-box ${aqiInfo.colorClass}`;
+    document.getElementById('aqi-text').innerText = I18N[state.lang].aqi[aqiInfo.text] || '...';
+    document.getElementById('aqi-value').innerText = aqiValue;
+
+    const hourlyContainer = document.getElementById('hourly-forecast-container');
+    hourlyContainer.innerHTML = '';
+    for(let i = currentHour; i < currentHour + 24; i++) { if(i >= hourly.time.length) break; const time = new Date(hourly.time[i]).getHours(); hourlyContainer.innerHTML += `<div class="flex flex-col items-center flex-shrink-0 gap-2"><p class="text-sm opacity-80">${time}:00</p><i data-lucide="${getWeatherInfo(hourly.weather_code[i], 1).icon}" class="w-8 h-8"></i><p class="font-bold">${Math.round(hourly.temperature_2m[i])}°</p></div>`; }
+
+    const dailyContainer = document.getElementById('daily-forecast-container');
+    dailyContainer.innerHTML = '';
+    for(let i = 1; i < 6; i++) { const day = new Date(daily.time[i]); const dayName = I18N[state.lang].days[day.getDay()]; dailyContainer.innerHTML += `<div class="flex items-center justify-between text-lg"><p class="font-bold w-1/3">${dayName}</p><i data-lucide="${getWeatherInfo(daily.weather_code[i], 1).icon}" class="w-8 h-8 opacity-80"></i><p class="opacity-80 w-1/3 text-right">${Math.round(daily.temperature_2m_min[i])}° / <span class="font-bold text-current opacity-100">${Math.round(daily.temperature_2m_max[i])}°</span></p></div>`; }
+    
+    document.getElementById('sunrise-time').innerText = new Date(daily.sunrise[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    document.getElementById('sunset-time').innerText = new Date(daily.sunset[0]).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    lucide.createIcons();
+}
+
+function toggleSidebar(open) { document.getElementById('sidebar').classList.toggle('-translate-x-full', !open); document.getElementById('overlay').classList.toggle('hidden', !open); }
+function toggleLangMenu() { document.getElementById('lang-dropdown').classList.toggle('hidden'); document.getElementById('lang-dropdown').classList.toggle('flex'); }
+function toggleDarkMode() { state.darkMode = !state.darkMode; localStorage.setItem('darkMode', state.darkMode); updateDarkMode(state.darkMode); }
+function toggleNeon() { state.neonEnabled = !state.neonEnabled; localStorage.setItem('neonEnabled', state.neonEnabled); updateNeon(state.neonEnabled); }
+function setLanguage(lang) { state.lang = lang; localStorage.setItem('lang', lang); Object.keys(I18N[state.lang]).forEach(key => { const el = document.getElementById(key) || document.querySelector(`[data-i18n='${key}']`); if (el && typeof I18N[state.lang][key] === 'string') el.innerText = I18N[state.lang][key]; const pl = document.querySelector(`[data-i18n-placeholder="${key}"]`); if(pl) pl.placeholder = I18N[state.lang][key]; }); toggleLangMenu(); }
+function setTheme(color) { state.theme = color; localStorage.setItem('theme', color); document.documentElement.style.setProperty('--theme-color', color); document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active')); event?.target?.classList.add('active'); }
+function updateDarkMode(isDark) { document.documentElement.classList.toggle('dark', isDark); document.getElementById('dark-mode-toggle').checked = isDark; }
+function updateNeon(isEnabled) { document.body.classList.toggle('neon-active', isEnabled); document.getElementById('neon-toggle').checked = isEnabled; }
+function updateClock() { if(state.clockInterval) clearInterval(state.clockInterval); state.clockInterval = setInterval(() => { const now = new Date(); document.getElementById('date-time').innerText = now.toLocaleDateString(state.lang, { weekday: 'long', month: 'long', day: 'numeric' }) + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }, 1000); }
+function getWeatherInfo(code, isDay = 1) { switch (code) { case 0: return { icon: isDay ? 'sun' : 'moon', bgClass: isDay ? 'bg-day-clear' : 'bg-night-clear' }; case 1: case 2: case 3: return { icon: isDay ? 'cloud-sun' : 'cloud-moon', bgClass: isDay ? 'bg-day-cloudy' : 'bg-night-cloudy' }; case 45: case 48: return { icon: 'cloud-fog', bgClass: 'bg-day-cloudy' }; case 51: case 53: case 55: case 61: case 63: case 65: case 80: case 81: case 82: return { icon: 'cloud-rain', bgClass: 'bg-rain' }; case 71: case 73: case 75: return { icon: 'cloud-snow', bgClass: 'bg-snow' }; case 95: case 96: case 99: return { icon: 'cloud-lightning', bgClass: 'bg-rain' }; default: return { icon: 'cloud', bgClass: 'bg-day-cloudy' }; } }
+function getAqiInfo(value) { if (value <= 50) return { text: "good", colorClass: "bg-green-500/80" }; if (value <= 100) return { text: "moderate", colorClass: "bg-yellow-500/80" }; if (value <= 150) return { text: "unhealthy_sensitive", colorClass: "bg-orange-500/80" }; if (value <= 200) return { text: "unhealthy", colorClass: "bg-red-500/80" }; if (value <= 300) return { text: "very_unhealthy", colorClass: "bg-purple-500/80" }; return { text: "hazardous", colorClass: "bg-maroon-500/80" }; }
+function showLoading() { document.getElementById('loading-screen').classList.remove('hidden'); document.getElementById('loading-screen').classList.remove('opacity-0'); }
+function hideLoading() { document.getElementById('loading-screen').classList.add('opacity-0'); document.getElementById('main-content').classList.remove('opacity-0'); setTimeout(() => document.getElementById('loading-screen').classList.add('hidden'), 500); }
+</script>
 </body>
 </html>
