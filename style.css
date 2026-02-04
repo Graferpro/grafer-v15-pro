@@ -1,1 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root { --theme-color: #4f46e5; }
+body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+.neon-box { border: 1px solid rgba(229, 231, 235, 1); }
+.dark .neon-box { border: 1px solid rgba(255, 255, 255, 0.1); }
+.card-pop { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.card-pop:hover { transform: translateY(-4px); }
 
