@@ -1,5 +1,8 @@
-// Global Değişkenler
-let API_KEY = ''; // Başlangıçta boş, sunucudan doldurulacak
+// --- GLOBAL AYARLAR ---
+// NOT: Eğer sunucudan anahtar gelmezse bu yedek anahtar çalışacak.
+const FALLBACK_KEY = 'bd037c8df3-e9e9dee6a5-t9tvbi'; 
+
+let API_KEY = ''; 
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
 const CURRENCY_NAMES = {'USD':'Dollar', 'EUR':'Euro', 'GBP':'Pound', 'TRY':'Lira', 'PLN':'Złoty', 'JPY':'Yen', 'RUB':'Ruble', 'GEL':'Lari'};
 const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
@@ -40,7 +43,22 @@ let state = {
 
 let charts = {}; let intervals = {};
 
-// SAYFA YÜKLENDİĞİNDE ÇALIŞACAK FONKSİYON
+// HATA AYIKLAMA KONSOLU (Sayfanın altında görünür)
+const createDebugConsole = () => {
+    const el = document.createElement('div');
+    el.id = 'debug-console';
+    el.style.cssText = 'position:fixed; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.9); color:#00ff00; font-family:monospace; font-size:10px; max-height:80px; overflow-y:auto; z-index:9999; padding:5px; pointer-events:none; border-top:1px solid #00ff00; display:none;';
+    document.body.appendChild(el);
+    return el;
+};
+const debugLog = (msg) => {
+    const el = document.getElementById('debug-console') || createDebugConsole();
+    el.style.display = 'block'; // Hatayı göster
+    el.innerHTML += `<div>> ${msg}</div>`;
+    el.scrollTop = el.scrollHeight;
+    console.log(msg);
+};
+
 window.onload = async () => {
     lucide.createIcons();
     initLanguage();
@@ -48,23 +66,35 @@ window.onload = async () => {
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
 
-    // --- API ANAHTARLARINI GÜVENLİ ŞEKİLDE ÇEK ---
+    // --- API ANAHTAR YÖNETİMİ ---
+    debugLog("Uygulama başlatılıyor...");
     try {
+        debugLog("API Key sunucudan isteniyor...");
         const keyResponse = await fetch('/api/get-keys');
-        const keys = await keyResponse.json();
-        // Backend'deki get-keys.js dosyasından dönen API_KEY_FOREX'i alıyoruz
-        if(keys.API_KEY_FOREX) {
-            API_KEY = keys.API_KEY_FOREX;
-            console.log("API Anahtarı başarıyla yüklendi.");
+        if (keyResponse.ok) {
+            const keys = await keyResponse.json();
+            if(keys.API_KEY_FOREX) {
+                API_KEY = keys.API_KEY_FOREX;
+                debugLog("✅ API Key başarıyla alındı.");
+            } else {
+                debugLog("⚠️ Sunucudan boş anahtar geldi.");
+            }
         } else {
-            console.warn("API Anahtarı bulunamadı, demo verileri kullanılabilir.");
+            debugLog(`⚠️ Sunucu yanıt vermedi (Kod: ${keyResponse.status}).`);
         }
     } catch (error) {
-        console.error("Anahtar yükleme hatası:", error);
+        debugLog(`⚠️ Sunucu hatası: ${error.message}`);
     }
-    // ---------------------------------------------
-    
+
+    // YEDEK ANAHTAR KONTROLÜ
+    if (!API_KEY || API_KEY.length < 10) {
+        debugLog("🔄 Yedek (Fallback) anahtar devreye alındı.");
+        API_KEY = FALLBACK_KEY;
+    }
+
     await fetchData();
+    
+    // UI Başlatma
     const neonToggle = document.getElementById('neon-toggle'); neonToggle.checked = state.neonEnabled;
     if(state.neonEnabled) document.body.classList.add('neon-active');
     neonToggle.addEventListener('change', (e) => { state.neonEnabled = e.target.checked; localStorage.setItem('neonEnabled', state.neonEnabled); if(state.neonEnabled) document.body.classList.add('neon-active'); else document.body.classList.remove('neon-active'); });
@@ -102,13 +132,51 @@ function setTheme(color) {
     else if(color==='#ef4444') document.querySelectorAll('.theme-dot')[4].classList.add('active');
     initChart('mainChart', state.theme); nav(document.querySelector('.page-section.active').id.replace('page-',''));
 }
+
 async function fetchData() { 
-    if(!API_KEY) { console.warn("API Key yok, veri çekilemiyor."); return; }
-    try { const res = await fetch(`https://api.fastforex.io/fetch-all?api_key=${API_KEY}`); const data = await res.json(); state.rates = data.results; } catch(e) { console.log("API Error", e); } 
+    if(!API_KEY) { debugLog("❌ Kritik Hata: API Anahtarı yok!"); return; }
+    try { 
+        debugLog("Veri çekiliyor...");
+        const res = await fetch(`https://api.fastforex.io/fetch-all?api_key=${API_KEY}`); 
+        if(!res.ok) throw new Error(`API Hatası: ${res.status}`);
+        const data = await res.json(); 
+        
+        if(!data.results) throw new Error("API boş veri döndürdü.");
+        
+        state.rates = data.results; 
+        debugLog("✅ Veriler başarıyla güncellendi.");
+        // Başarılıysa konsolu gizle (3 saniye sonra)
+        setTimeout(() => { 
+            const el = document.getElementById('debug-console'); 
+            if(el) el.style.display = 'none'; 
+        }, 3000);
+
+    } catch(e) { 
+        debugLog(`❌ Veri Çekme Hatası: ${e.message}`);
+        console.log("API Error", e); 
+    } 
 }
-function updateUI() { updateBaseCurrencyUI(); updateConverterUI(); renderGrid(); renderCryptoGrid(); renderPortfolio(); }
+
+function updateUI() { 
+    // Rates boşsa UI güncelleme
+    if(Object.keys(state.rates).length === 0) return;
+    updateBaseCurrencyUI(); updateConverterUI(); renderGrid(); renderCryptoGrid(); renderPortfolio(); 
+}
 function getFlagUrl(code) { return FLAG_MAP[code] ? `https://flagcdn.com/w80/${FLAG_MAP[code]}.png` : null; }
-function getPrice(code) { let rateCode = state.rates[code]; if(!rateCode) { if(code==='BTC') rateCode = 1/65000; else if(code==='ETH') rateCode = 1/3500; else if(code==='SOL') rateCode = 1/140; else if(code==='XRP') rateCode = 1/0.60; else rateCode = 1; } return (1 / rateCode) * state.rates[state.baseCurrency]; }
+function getPrice(code) { 
+    if(!state.rates || Object.keys(state.rates).length === 0) return 0;
+    let rateCode = state.rates[code]; 
+    if(!rateCode) { 
+        if(code==='BTC') rateCode = 1/65000; 
+        else if(code==='ETH') rateCode = 1/3500; 
+        else if(code==='SOL') rateCode = 1/140; 
+        else if(code==='XRP') rateCode = 1/0.60; 
+        else rateCode = 1; 
+    } 
+    // NaN koruması
+    const baseRate = state.rates[state.baseCurrency] || 1;
+    return (1 / rateCode) * baseRate; 
+}
 function toggleVSMode() { if(state.vsPair) { state.vsPair = null; document.getElementById('vs-btn').classList.remove('bg-indigo-600', 'text-white'); } else { state.vsPair = 'BTC'; document.getElementById('vs-btn').classList.add('bg-indigo-600', 'text-white'); } initChart('mainChart', state.theme); startLiveSimulations(); }
 function swapChart() { state.isChartSwapped = !state.isChartSwapped; startLiveSimulations(); }
 
@@ -124,6 +192,7 @@ function startLiveSimulations() {
     if(intervals['main']) clearInterval(intervals['main']);
     const mainChart = charts['mainChart'];
     let val1 = getPrice(state.chartPair); 
+    if(val1 === 0) val1 = 1; // 0 gelirse grafik çökmesin
     if(state.isChartSwapped) val1 = 1/val1;
     const valVS = state.vsPair ? getPrice(state.vsPair) : 0;
     
@@ -146,7 +215,8 @@ function startLiveSimulations() {
     
     if(intervals['crypto']) clearInterval(intervals['crypto']);
     const cChart = charts['cryptoChart'];
-    const cVal = getPrice(state.cryptoChartPair);
+    let cVal = getPrice(state.cryptoChartPair);
+    if(cVal === 0) cVal = 50000; // Demo veri
     cChart.data.datasets[0].data = Array(20).fill(cVal).map(v => v * (1+(Math.random()-0.5)*0.01));
     intervals['crypto'] = setInterval(() => {
         const arr = cChart.data.datasets[0].data; const next = arr[arr.length-1] * (1 + (Math.random()-0.5)*0.01);
