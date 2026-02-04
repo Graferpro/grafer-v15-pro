@@ -1,13 +1,12 @@
-
-// api/proxy.js - GÜVENLİ VEKİL SUNUCU
-// Bu kod Vercel sunucusunda çalışır, anahtarı gizli tutar.
+// api/proxy.js
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-    // CORS izinleri
+    // CORS İzinleri (Her yerden erişim için)
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*'); 
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
-    // Vercel ayarlarından anahtarı al
+    // Vercel'deki gizli anahtarı al
     const API_KEY = process.env.API_KEY_FOREX;
 
     if (!API_KEY) {
@@ -15,17 +14,16 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Sunucu tarafında isteği biz yapıyoruz (Anahtar URL'de ama sunucuda kalıyor)
-        const url = `https://api.fastforex.io/fetch-all?api_key=${API_KEY}`;
-        const response = await fetch(url);
+        // FastForex API'sine isteği biz yapıyoruz
+        const response = await fetch(`https://api.fastforex.io/fetch-all?api_key=${API_KEY}`);
         
         if (!response.ok) {
-            throw new Error(`Dış API hatası: ${response.status}`);
+            throw new Error(`Dış API Hatası: ${response.status}`);
         }
 
         const data = await response.json();
         
-        // Sadece veriyi kullanıcıya yolla (Anahtarı yollama!)
+        // Veriyi frontend'e gönder
         res.status(200).json(data);
 
     } catch (error) {
