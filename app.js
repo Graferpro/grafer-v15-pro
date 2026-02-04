@@ -1,135 +1,153 @@
-// --- AYARLAR ---
-const FALLBACK_KEY = 'bd037c8df3-e9e9dee6a5-t9tvbi'; // Vercel çalışmazsa bu devreye girer
+// --- GRAFER PRO V16 AYARLARI ---
+const STOCK_SYMBOLS = ['AAPL', 'TSLA', 'AMZN', 'GOOGL', 'MSFT', 'NVDA'];
+const CRYPTO_IDS = ['bitcoin', 'ethereum', 'solana', 'ripple'];
+
 let state = {
-    rates: {},
-    baseCurrency: 'TRY',
-    chartPair: 'USD',
-    theme: '#4f46e5'
+    rates: {},   // Dövizler
+    stocks: {},  // Hisseler
+    cryptos: {}  // Kriptolar
 };
 
-// --- BAŞLAT ---
 window.onload = async () => {
     lucide.createIcons();
     initChart();
-    await fetchData(); // Veriyi çek
-    document.getElementById('loading-screen').style.display = 'none'; // Yükleme ekranını kapat
-    updateUI();
     
-    // Canlı grafik simülasyonu başlat
-    setInterval(updateChartSimulation, 1000);
+    console.log("🚀 V16 Motorları Çalıştırılıyor...");
+    
+    // 1. DÖVİZLERİ ÇEK
+    await fetchForex();
+    
+    // 2. HİSSELERİ ÇEK (Tek tek soruyoruz)
+    fetchStocks();
+
+    // 3. KRİPTOLARI ÇEK
+    fetchCrypto();
+
+    // Otomatik Yenileme (Her 15 saniyede bir)
+    setInterval(() => { fetchForex(); fetchStocks(); fetchCrypto(); }, 15000);
 };
 
-// --- VERİ ÇEKME (PROXY SİSTEMİ) ---
-async function fetchData() {
+// --- DÖVİZ (FOREX) ---
+async function fetchForex() {
     try {
-        console.log("📡 Veriler sunucudan isteniyor...");
-        
-        // 1. Önce güvenli proxy'yi dene
-        const res = await fetch('/api/proxy');
-        
-        if (res.ok) {
-            const data = await res.json();
-            if (data.results) {
-                state.rates = data.results;
-                console.log("✅ Proxy üzerinden veri alındı!");
-                return;
-            }
+        const res = await fetch('/api/proxy?type=forex');
+        const data = await res.json();
+        if(data.results) {
+            state.rates = data.results;
+            const tryRate = state.rates['TRY'];
+            
+            // Ana Fiyatı Güncelle (USD)
+            document.getElementById('main-price').innerText = `₺ ${tryRate.toLocaleString('tr-TR', {minimumFractionDigits:4})}`;
+            
+            // Gridleri Doldur
+            renderForexGrid();
         }
-        
-        throw new Error("Proxy başarısız");
+    } catch(e) { console.error("Forex Hatası:", e); }
+}
 
-    } catch (e) {
-        console.warn("⚠️ Proxy hatası, yedek yöntem deneniyor...", e);
-        
-        // 2. Proxy çalışmazsa yedek anahtarla direkt çek (Fallback)
+function renderForexGrid() {
+    const list = ['EUR', 'GBP', 'CHF', 'JPY'];
+    const tryRate = state.rates['TRY'];
+    const container = document.getElementById('grid-forex');
+    
+    container.innerHTML = list.map(code => {
+        const val = (1 / state.rates[code]) * tryRate;
+        return `
+        <div class="bg-white dark:bg-cardDark p-4 rounded-2xl neon-box shadow-sm card-pop">
+            <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-500 text-xs">${code}/TRY</span>
+                <span class="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-bold">%0.4</span>
+            </div>
+            <p class="text-xl font-bold text-slate-800 dark:text-white mt-1">₺ ${val.toLocaleString('tr-TR', {maximumFractionDigits:2})}</p>
+        </div>`;
+    }).join('');
+}
+
+// --- HİSSE SENETLERİ (STOCKS) ---
+async function fetchStocks() {
+    const container = document.getElementById('list-stocks');
+    container.innerHTML = ''; // Temizle
+
+    for (const sym of STOCK_SYMBOLS) {
         try {
-            const url = `https://api.fastforex.io/fetch-all?api_key=${FALLBACK_KEY}`;
-            const res2 = await fetch(url);
-            const data2 = await res2.json();
-            state.rates = data2.results;
-            console.log("✅ Yedek anahtarla veri alındı.");
-        } catch (err) {
-            console.error("❌ HATA: Hiçbir şekilde veri alınamadı.", err);
-            alert("Veri çekilemedi. İnternet bağlantınızı kontrol edin.");
-        }
+            // Proxy üzerinden Finnhub'a soruyoruz
+            const res = await fetch(`/api/proxy?type=stock&symbol=${sym}`);
+            const data = await res.json();
+            
+            // Finnhub veri yapısı: c = current price, dp = percent change
+            const price = data.c;
+            const change = data.dp; 
+            const colorClass = change >= 0 ? 'text-green-500' : 'text-red-500';
+            const bgClass = change >= 0 ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30';
+            const arrow = change >= 0 ? '↑' : '↓';
+
+            const html = `
+            <div class="flex items-center justify-between bg-white dark:bg-cardDark p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center font-bold text-xs text-slate-600 dark:text-slate-300">${sym[0]}</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 dark:text-white">${sym}</h4>
+                        <p class="text-xs text-slate-400">Nasdaq</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-lg text-slate-800 dark:text-white">$${price}</p>
+                    <span class="text-xs font-bold ${colorClass} px-2 py-1 rounded-lg ${bgClass}">${arrow} %${change ? change.toFixed(2) : '0.00'}</span>
+                </div>
+            </div>`;
+            
+            container.innerHTML += html;
+
+        } catch(e) { console.warn(`Hisse Hatası (${sym}):`, e); }
     }
 }
 
-// --- ARA YÜZ GÜNCELLEME ---
-function updateUI() {
-    if (!state.rates['USD']) return;
-
-    // Gridleri oluştur
-    const favs = ['USD', 'EUR', 'GBP', 'GA']; // Altın (GA) sembolik
-    const grid = document.getElementById('dashboard-grid');
-    
-    // TRY Bazlı Fiyat Hesaplama
-    const tryRate = state.rates['TRY'];
-    
-    grid.innerHTML = favs.map(curr => {
-        let val = 0;
-        if (curr === 'GA') val = (1 / (state.rates['XAU'] || 0.0004)) * tryRate / 31.1; // Altın (Gram)
-        else val = (1 / state.rates[curr]) * tryRate;
+// --- KRİPTO (Coincap - Public API) ---
+async function fetchCrypto() {
+    try {
+        const res = await fetch('https://api.coincap.io/v2/assets?limit=6');
+        const data = await res.json();
+        const container = document.getElementById('grid-crypto');
         
-        return `
-        <div class="bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm">
-            <div class="flex justify-between items-start">
-                <span class="font-bold text-lg">${curr}</span>
-                <span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">CANLI</span>
-            </div>
-            <div>
-                <p class="font-bold text-slate-500 text-xs">${curr}/TRY</p>
-                <p class="font-bold text-xl text-slate-800 dark:text-white">₺ ${val.toLocaleString('tr-TR', {maximumFractionDigits:2})}</p>
-            </div>
-        </div>`;
-    }).join('');
-
-    // Çeviriciyi güncelle
-    convert();
+        container.innerHTML = data.data.slice(0, 4).map(coin => {
+            const price = parseFloat(coin.priceUsd);
+            const change = parseFloat(coin.changePercent24Hr);
+            const color = change >= 0 ? 'text-green-500' : 'text-red-500';
+            
+            return `
+            <div class="bg-white dark:bg-cardDark p-4 rounded-2xl neon-box shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <img src="https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png" class="w-6 h-6 rounded-full">
+                    <span class="font-bold text-sm">${coin.symbol}</span>
+                </div>
+                <p class="font-bold text-lg">$${price.toLocaleString(undefined, {maximumFractionDigits:2})}</p>
+                <p class="text-xs font-bold ${color}">%${change.toFixed(2)}</p>
+            </div>`;
+        }).join('');
+    } catch(e) {}
 }
 
-// --- ÇEVİRİCİ ---
-function convert() {
-    const amt = parseFloat(document.getElementById('conv-amount').value);
-    const usdToTry = (1 / state.rates['USD']) * state.rates['TRY'];
-    const res = amt * usdToTry;
-    document.getElementById('conv-result').innerText = res.toLocaleString('tr-TR', {maximumFractionDigits:2});
-}
-
-// --- GRAFİK (Chart.js) ---
-let myChart;
+// --- GRAFİK ---
 function initChart() {
     const ctx = document.getElementById('mainChart').getContext('2d');
-    myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'line',
         data: {
             labels: Array(20).fill(''),
             datasets: [{
-                data: Array(20).fill(34.50), // Başlangıç verisi
-                borderColor: state.theme,
+                data: Array(20).fill(34).map(x => x + Math.random()),
+                borderColor: '#4f46e5',
                 borderWidth: 3,
                 tension: 0.4,
                 pointRadius: 0,
                 fill: true,
-                backgroundColor: state.theme + '33'
+                backgroundColor: '#4f46e520'
             }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
     });
 }
 
-function updateChartSimulation() {
-    if (!myChart || !state.rates['USD']) return;
-    
-    // Basit simülasyon: Gerçek kur etrafında küçük oynamalar
-    const realPrice = (1 / state.rates['USD']) * state.rates['TRY'];
-    const randomFluctuation = realPrice * (1 + (Math.random() - 0.5) * 0.001);
-    
-    const data = myChart.data.datasets[0].data;
-    data.shift();
-    data.push(randomFluctuation);
-    myChart.update('none'); // Animasyonsuz güncelle
-
-    document.getElementById('chart-price').innerText = '₺ ' + randomFluctuation.toLocaleString('tr-TR', {maximumFractionDigits:4});
+function scrollToId(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
-
