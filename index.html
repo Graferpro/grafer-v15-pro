@@ -1,1 +1,84 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grafer Pro - V15 Global</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: 'var(--theme-color)', darkBg: '#0f172a', cardDark: '#1e293b' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    boxShadow: { 'float': '0 10px 40px -10px rgba(0, 0, 0, 0.08)' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#F8F9FE] text-slate-900 dark:bg-darkBg dark:text-white pb-24 transition-colors duration-300">
+    
+    <!-- YÜKLENİYOR EKRANI -->
+    <div id="loading-screen" class="fixed inset-0 bg-white dark:bg-darkBg z-[999] flex items-center justify-center flex-col">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        <p class="mt-4 font-bold text-sm animate-pulse">Veriler Çekiliyor...</p>
+    </div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 px-5 py-3 flex justify-between items-center bg-white/95 dark:bg-darkBg/95 backdrop-blur-md border-b border-gray-100 dark:border-white/5">
+        <div class="text-center w-full">
+            <span class="text-[10px] font-bold tracking-widest block uppercase animate-pulse" style="color:var(--theme-color)">V15 GLOBAL</span>
+            <span class="font-bold text-lg tracking-tight">GRAFER PRO</span>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK -->
+    <main class="px-4 mt-4">
+        <!-- Grafik Kartı -->
+        <div class="w-full bg-white dark:bg-cardDark rounded-[2rem] p-5 mb-6 relative overflow-hidden neon-box shadow-float">
+            <div class="flex justify-between items-center mb-4 relative z-10">
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-white/5 px-3 py-1.5 rounded-full border border-slate-100 dark:border-white/5">
+                        <span class="font-bold text-sm">USD/<span class="base-curr-text">TRY</span></span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p id="chart-price" class="text-2xl font-bold font-mono tracking-tight" style="color:var(--theme-color)">---</p>
+                    <span class="text-[10px] text-green-500 font-bold animate-pulse">● LIVE</span>
+                </div>
+            </div>
+            <div class="h-[200px] w-full relative">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+
+        <!-- PİYASA -->
+        <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-3" data-i18n="market">Piyasa</h3>
+        <div class="grid grid-cols-2 gap-3 mb-6" id="dashboard-grid">
+            <!-- Gridler JS ile dolacak -->
+        </div>
+
+        <!-- ÇEVİRİCİ -->
+        <div class="bg-white dark:bg-cardDark rounded-[2rem] p-6 neon-box shadow-float mt-6">
+            <h2 class="text-xl font-bold mb-4">Hızlı Çevirici</h2>
+            <div class="flex justify-between items-center gap-2">
+                <input type="number" id="conv-amount" value="1" class="w-20 bg-transparent border-b border-gray-300 text-center font-bold text-xl outline-none" oninput="convert()">
+                <span class="font-bold">USD</span>
+                <span class="text-2xl">=</span>
+                <span id="conv-result" class="font-bold text-indigo-500 text-xl">---</span>
+                <span class="font-bold">TRY</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
