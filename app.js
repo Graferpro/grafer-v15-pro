@@ -52,24 +52,39 @@ window.onload = async () => {
 };
 
 // --- API BAĞLANTISI (BACKEND ÜZERİNDEN) ---
+// --- YENİ FETCH DATA FONKSİYONU ---
 async function fetchData() { 
     try { 
-        // DİKKAT: Burası artık senin kendi API'ne gidiyor!
+        // 1. Döviz Verilerini Çek (Forex API)
         const res = await fetch('/api/forex'); 
         const data = await res.json(); 
         
         if(data.results) {
             state.rates = data.results; 
-        } else {
-            console.error("Veri alınamadı, demo moduna geçiliyor.");
-            state.rates = {'USD':1, 'EUR':0.92, 'TRY':32.5, 'PLN':4.0, 'GBP':0.79, 'GEL':2.67};
         }
+
+        // 2. Altın ve Gümüş Verilerini Çek (Gold API)
+        try {
+            const goldRes = await fetch('/api/gold');
+            const goldData = await goldRes.json();
+            
+            // Eğer veri geldiyse sisteme ekle
+            // Mantık: 1 Ons Altın = X Dolar ise, matematiksel dönüşüm yapıyoruz
+            if(goldData.XAU) {
+                state.rates['XAU'] = 1 / goldData.XAU; // Altın (Ons)
+                state.rates['XAG'] = 1 / goldData.XAG; // Gümüş (Ons)
+            }
+        } catch (goldErr) {
+            console.log("Altın verisi çekilemedi:", goldErr);
+        }
+
     } catch(e) { 
         console.log("Sunucu Hatası:", e); 
-        // Hata durumunda boş kalmasın diye varsayılan veriler
-        state.rates = {'USD':1, 'EUR':0.92, 'TRY':32.5, 'PLN':4.0};
+        // Hata durumunda demo verileri (Döviz + Altın)
+        state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2040, 'XAG': 1/22.5};
     } 
 }
+
 // --- DİL VE AYAR FONKSİYONLARI ---
 function initLanguage() {
     if(state.lang === 'auto') { const navLang = navigator.language.slice(0, 2); state.lang = ['tr','en','ru','pl','ka'].includes(navLang) ? navLang : 'en'; }
