@@ -371,11 +371,20 @@ function renderGrid() {
         else if (flagUrl) imgTag = `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">`;
         else imgTag = `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`;
         
-        // Tıklanınca Grafik Aç (onclick eklendi)
-        return `<div onclick="openChartModal('${curr}')" class="cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition"><div class="flex justify-between items-start">${imgTag}<span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">+0.4%</span></div><div><p class="font-bold text-slate-500 text-xs">${curr}/${state.baseCurrency}</p><p class="font-bold text-xl text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:3})}</p></div></div>`; 
+        // YENİ EKLENEN KISIM: Sağ üst köşedeki ikon (absolute positioning)
+        return `
+        <div onclick="openChartModal('${curr}')" class="relative cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition group">
+            <div class="absolute top-3 right-3 text-slate-300 dark:text-slate-600 opacity-50 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="maximize-2" size="14"></i>
+            </div>
+            <div class="flex justify-between items-start">${imgTag}<span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">+0.4%</span></div>
+            <div><p class="font-bold text-slate-500 text-xs">${curr}/${state.baseCurrency}</p><p class="font-bold text-xl text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:3})}</p></div>
+        </div>`; 
     }).join(''); 
+    
     lucide.createIcons();
 }
+
 
 function renderCryptoGrid() { 
     const container = document.getElementById('crypto-grid'); const sym = getSymbol(state.baseCurrency); 
