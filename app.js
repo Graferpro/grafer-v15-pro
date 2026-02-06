@@ -212,17 +212,50 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
+// --- AI FONKSİYONU (GERÇEK BAĞLANTI) ---
+async function openAIModal() {
+    // 1. Hangi varlığa bakıyoruz? (Grafik başlığından alalım)
+    const titleEl = document.getElementById('tv-title');
+    let rawSymbol = titleEl ? titleEl.innerText.split('/')[0].trim() : state.chartPair;
+    
+    // Fiyatı bulalım
+    const price = getPrice(rawSymbol).toFixed(4);
 
-// --- MODAL FONKSİYONLARI ---
-function openAIModal() {
+    // 2. Modalı aç ve "Yükleniyor" göster
     document.getElementById('ai-modal').classList.remove('hidden');
     const content = document.getElementById('ai-content');
-    content.innerHTML = `<span class="animate-pulse">${I18N[state.lang].analyzing || 'Analyzing...'}</span>`;
-    setTimeout(() => {
-        const msgs = AI_MESSAGES[state.lang] || AI_MESSAGES['en'];
-        content.innerText = msgs[Math.floor(Math.random() * msgs.length)];
-    }, 1500);
+    content.innerHTML = `
+        <div class="flex flex-col items-center gap-2">
+            <span class="animate-pulse text-indigo-400 font-bold">${I18N[state.lang].analyzing || 'Analyzing...'}</span>
+            <span class="text-xs text-slate-400">GPT-4 Piyasayı Tarıyor...</span>
+        </div>`;
+
+    // 3. Backend'e (api/ai.js) sor
+    try {
+        const res = await fetch('/api/ai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                symbol: rawSymbol, 
+                price: price, 
+                lang: state.lang 
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.message) {
+            // Gelen cevabı daktilo efektiyle yazdırabiliriz veya direkt basabiliriz
+            content.innerText = data.message;
+        } else {
+            content.innerText = "Bağlantı yoğunluğu nedeniyle analiz alınamadı. Tekrar deneyin.";
+        }
+    } catch (err) {
+        console.error(err);
+        content.innerText = "Yapay zeka şu an meşgul. (API Key Hatası olabilir)";
+    }
 }
+
 
 // --- TRADINGVIEW GRAFİK AÇMA ---
 function openChartModal(symbol) {
