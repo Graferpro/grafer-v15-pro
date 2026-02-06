@@ -3,26 +3,31 @@ export default async function handler(req, res) {
     const API_KEY = process.env.API_KEY_OPENAI;
     if (!API_KEY) return res.status(500).json({ error: 'Key Yok' });
 
-    const { message } = req.body; // Artık kullanıcı ne yazarsa onu alıyoruz
+    const { message, lang } = req.body;
+    
+    // 1. Sistemin ana dilini belirle (Açılış için)
+    const baseLang = (lang === 'tr') ? 'Turkish' : 'English';
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify({
-                model: "gpt-4o-mini", // Hızlı ve akıllı
+                model: "gpt-4o-mini",
                 messages: [
                     { 
                         "role": "system", 
-                        // İŞTE EĞİTİM BURADA: Asla İngilizce konuşma emri.
-                        "content": "Senin adın 'Grafer AI'. Sen profesyonel, yardımsever ve esprili bir finans asistanısın. YALNIZCA TÜRKÇE konuşmalısın. Kullanıcı İngilizce sorsa bile sen Türkçe cevap ver. Cevapların kısa, net ve yatırım tavsiyesi içermeyen (YTD) şekilde olsun." 
+                        // DİL EMRİ GÜNCELLENDİ: Esnek ve Akıllı.
+                        "content": `Sen 'Grafer AI' adında finansal bir asistansın. 
+                        Varsayılan dilin: ${baseLang}. İlk cevabı bu dilde ver.
+                        ANCAK: Eğer kullanıcı farklı bir dilde (örneğin Lehçe, Rusça, Almanca) soru sorarsa, DERHAL o dile geç ve o dilde cevap ver.
+                        Cevapların kısa, profesyonel ve yatırım tavsiyesi içermeyen (YTD) şekilde olsun.` 
                     },
                     { 
                         "role": "user", 
-                        "content": message // Kullanıcının sorusu
+                        "content": message 
                     }
-                ],
-                max_tokens: 200
+                ]
             })
         });
 
