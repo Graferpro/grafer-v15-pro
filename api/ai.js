@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     const API_KEY = process.env.API_KEY_OPENAI;
     if (!API_KEY) return res.status(500).json({ error: 'Key Yok' });
 
-    const { message } = req.body; // Artık dil kodu göndermiyoruz, AI kendi anlasın.
+    const { message } = req.body;
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -15,12 +15,12 @@ export default async function handler(req, res) {
                     { 
                         "role": "system", 
                         "content": `You are 'Grafer Pro AI'. 
-                        Your Default Language is ENGLISH.
-                        CRITICAL RULE: Always reply in the SAME LANGUAGE the user writes in.
-                        - If user writes in Turkish -> Reply in Turkish.
-                        - If user writes in Polish -> Reply in Polish.
-                        - If user writes in English -> Reply in English.
-                        Keep answers short, professional and strictly financial. No investment advice.` 
+                        You are a helpful financial assistant.
+                        CRITICAL RULE: Detect the language of the user's message and reply in the SAME language.
+                        - If user asks in Turkish -> Reply in Turkish.
+                        - If user asks in English -> Reply in English.
+                        - If user asks in Polish -> Reply in Polish.
+                        Keep answers short, professional, and strictly financial. No investment advice.` 
                     },
                     { 
                         "role": "user", 
