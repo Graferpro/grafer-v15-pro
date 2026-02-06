@@ -5,19 +5,9 @@ export default async function handler(req, res) {
 
     const { message, lang } = req.body;
     
-    // Dil Haritası (Genişletilebilir)
-    const langMap = {
-        'tr': 'Turkish',
-        'en': 'English',
-        'pl': 'Polish',
-        'ru': 'Russian',
-        'ka': 'Georgian',
-        'de': 'German',
-        'fr': 'French'
-    };
-
-    // Frontend'den gelen 'tr', 'pl' kodunu tam isme çevir (Yoksa English yap)
-    const targetLang = langMap[lang] || 'English';
+    // Dil kodunu tam isme çevir
+    const langMap = { 'tr': 'Turkish', 'en': 'English', 'pl': 'Polish', 'ru': 'Russian' };
+    const systemLang = langMap[lang] || 'English';
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -29,10 +19,10 @@ export default async function handler(req, res) {
                     { 
                         "role": "system", 
                         "content": `Senin adın 'Grafer Pro Ai Asistan'. 
-                        Sen profesyonel bir finans uzmanısın.
-                        GÖREVİN: Kullanıcıya YALNIZCA ${targetLang} dilinde cevap vermek.
-                        Kullanıcı başka dilde sorsa bile sen ısrarla ${targetLang} konuş.
-                        Cevapların kısa, net ve yatırım tavsiyesi içermeyen (YTD) şekilde olsun.` 
+                        Varsayılan Dilin: ${systemLang}.
+                        KURAL 1: Kullanıcıya öncelikle ${systemLang} dilinde cevap ver.
+                        KURAL 2: Eğer kullanıcı farklı bir dilde sorarsa (Örn: Lehçe), o dile geç.
+                        Kısa, net ve finansal tavsiye vermeden konuş.` 
                     },
                     { 
                         "role": "user", 
@@ -44,7 +34,7 @@ export default async function handler(req, res) {
 
         const data = await response.json();
         if(data.choices) return res.status(200).json({ reply: data.choices[0].message.content });
-        else return res.status(500).json({ error: 'Cevap yok' });
+        else return res.status(500).json({ error: '...' });
 
     } catch (e) { return res.status(500).json({ error: e.message }); }
 }
