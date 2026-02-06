@@ -1,20 +1,23 @@
-// --- VERSİYON (ZORLA TEMİZLİK) ---
-const APP_VERSION = '2.5'; 
+// --- VERSİYON (GÜNCELLEME) ---
+const APP_VERSION = '2.6'; 
 
 // --- SABİT VERİLER ---
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
-const NEWS_DATA = {
-    tr: ["Bitcoin 100K hedefine ilerliyor.", "Altın fiyatları rekor tazeledi.", "Merkez Bankası faiz kararını açıkladı.", "Teknoloji hisselerinde ralli var."],
-    en: ["Bitcoin approaching 100K target.", "Gold prices hit new record.", "Central Bank announces rate decision.", "Tech stocks rallying today."],
-    pl: ["Bitcoin zbliża się do poziomu 100 tys.", "Ceny złota biją nowe rekordy.", "Bank Centralny ogłasza decyzję ws. stóp.", "Akcje technologiczne rosną."]
-};
+const CURRENCY_NAMES = {'USD':'Dollar', 'EUR':'Euro', 'GBP':'Pound', 'TRY':'Lira', 'PLN':'Złoty', 'JPY':'Yen', 'RUB':'Ruble', 'GEL':'Lari', 'XAU':'Ons Altın', 'XAG':'Ons Gümüş'};
 const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
 
 // DİL AYARLARI
 const I18N = {
-    tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor..." },
-    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing..." },
-    pl: { dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "Reset", crypto_assets: "Aktywa Krypto", theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie..." }
+    tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor...", enter_amount: "Miktar Girin..." },
+    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing...", enter_amount: "Enter Amount..." },
+    pl: { dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "Reset", crypto_assets: "Aktywa Krypto", theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie...", enter_amount: "Wpisz kwotę..." },
+    ru: { dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "Сброс", crypto_assets: "Криптоактивы", theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ...", enter_amount: "Введите сумму..." }
+};
+
+const NEWS_DATA = {
+    tr: ["Bitcoin 100K hedefine ilerliyor.", "Altın fiyatları rekor tazeledi.", "Merkez Bankası faiz kararını açıkladı.", "Teknoloji hisselerinde ralli var."],
+    en: ["Bitcoin approaching 100K target.", "Gold prices hit new record.", "Central Bank announces rate decision.", "Tech stocks rallying today."],
+    pl: ["Bitcoin zbliża się do poziomu 100 tys.", "Ceny złota biją nowe rekordy.", "Bank Centralny ogłasza decyzję ws. stóp.", "Akcje technologiczne rosną."]
 };
 
 // --- STATE ---
@@ -29,7 +32,6 @@ let state = {
 };
 let charts = {}; let intervals = {};
 
-// --- BAŞLANGIÇ ---
 window.onload = async () => {
     if (localStorage.getItem('app_version') !== APP_VERSION) {
         localStorage.clear();
@@ -39,7 +41,7 @@ window.onload = async () => {
 
     lucide.createIcons();
 
-    // 1. DİL AYARI (TELEFONA GÖRE)
+    // 1. DİL AYARI
     if (!localStorage.getItem('lang')) {
         const phoneLang = navigator.language.slice(0, 2); 
         state.lang = I18N[phoneLang] ? phoneLang : 'en'; 
@@ -49,15 +51,21 @@ window.onload = async () => {
     }
     setLanguage(state.lang);
     
-    // 2. TEMİZLİK OPERASYONU (Hayalet Butonu Sil)
+    // 2. TEMİZLİK OPERASYONU (Hayalet Buton)
     cleanUpUI();
 
-    // 3. TEMA VE GRAFİK
+    // 3. ÇEVİRİCİ INPUT DÜZELTME
+    fixConverterInput();
+
+    // 4. DİL MENÜSÜ DÜZELTME (Scroll Ekle)
+    fixLangMenu();
+
+    // 5. TEMA VE GRAFİK
     setTheme(state.theme);
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
     
-    // 4. VERİLERİ ÇEK & KONUM
+    // 6. VERİLERİ ÇEK & KONUM
     await fetchData(); 
     await detectLocationCurrency(); 
 
@@ -75,29 +83,46 @@ window.onload = async () => {
     document.getElementById('theme-toggle').addEventListener('change', (e) => { document.documentElement.classList.toggle('dark', e.target.checked); });
 };
 
-// --- YENİ: UI TEMİZLİK FONKSİYONU ---
+// --- DÜZELTME: ÇEVİRİCİ GİRİŞİ (100 YERİNE BOŞLUK) ---
+function fixConverterInput() {
+    const input = document.getElementById('conv-amount');
+    if (input) {
+        input.value = ''; // İçi boş olsun
+        // Placeholder (Silik yazı) dil desteğiyle gelsin
+        input.placeholder = I18N[state.lang]?.enter_amount || "Enter Amount...";
+        // Sonuç kısmını da sıfırla
+        document.getElementById('conv-result').innerText = '---';
+    }
+}
+
+// --- DÜZELTME: DİL MENÜSÜ (SCROLL & Z-INDEX) ---
+function fixLangMenu() {
+    const menu = document.getElementById('lang-dropdown');
+    if (menu) {
+        // Menüye maksimum yükseklik ve kaydırma çubuğu ekle
+        menu.style.maxHeight = "300px";
+        menu.style.overflowY = "auto";
+        // Z-Index'i çok yüksek yap ki her şeyin üstünde olsun
+        menu.style.zIndex = "9999";
+    }
+}
+
 function cleanUpUI() {
-    // 1. Ana sayfadaki eski 'Analiza AI' butonlarını bul ve sil
     const allButtons = document.querySelectorAll('button');
     allButtons.forEach(btn => {
-        // Eğer butonun içinde 'Analiza' veya 'AI' geçiyorsa ve ana menüdeyse gizle
         if ((btn.innerText.includes('Analiza') || btn.innerText.includes('AI')) && !btn.onclick) {
-            btn.style.display = 'none'; // Gizle
+            btn.style.display = 'none';
         }
-        // Eğer HTML'den gelen statik bir buton ise (onclick özelliği yoksa)
         if(btn.innerHTML.includes('bot') && !btn.hasAttribute('onclick')) {
              btn.style.display = 'none';
         }
     });
-
-    // 2. Dil İkonunu Tamir Et
     updateLangIcon();
 }
 
 function updateLangIcon() {
     const langBtn = document.getElementById('lang-dropdown')?.previousElementSibling; 
     if(langBtn) {
-        // İkonu sıfırdan oluştur
         langBtn.innerHTML = `<i data-lucide="globe" class="inline-block mr-1"></i> ${state.lang.toUpperCase()}`;
         langBtn.className = "flex items-center text-yellow-400 font-bold animate-pulse cursor-pointer";
         langBtn.style.textShadow = "0 0 10px rgba(250, 204, 21, 0.6)";
@@ -121,7 +146,7 @@ async function detectLocationCurrency() {
             if (!state.favs.includes(userCurrency)) { state.favs.push(userCurrency); localStorage.setItem('favs_v9', JSON.stringify(state.favs)); }
             localStorage.setItem('user_currency_set', 'true');
         }
-    } catch (err) { console.log("Konum alınamadı, default devam."); }
+    } catch (err) { console.log("Konum alınamadı."); }
 }
 
 // --- API BAĞLANTISI ---
@@ -136,7 +161,7 @@ async function fetchData() {
     } catch(e) { state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2650, 'XAG': 1/31}; } 
 }
 
-// --- GRAFİK AÇMA (SABİT BUTONLU) ---
+// --- GRAFİK AÇMA ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(modal) modal.remove();
@@ -150,7 +175,6 @@ function openChartModal(symbol) {
             <button onclick="document.getElementById('tv-modal').remove()" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
         </div>
         <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative z-0 pb-20"></div>
-        
         <div class="fixed bottom-0 left-0 w-full p-4 bg-[#131722]/95 border-t border-gray-800 z-[100] flex justify-center backdrop-blur-md">
              <button onclick="openProAIChat('${symbol}')" class="w-full max-w-sm bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95 cursor-pointer">
                 <i data-lucide="sparkles"></i> Grafer Pro Ai
@@ -182,7 +206,6 @@ function openChartModal(symbol) {
 // --- GRAFER PRO AI CHAT ---
 function openProAIChat(symbol) {
     const price = getPrice(symbol).toFixed(4);
-    
     let chatModal = document.getElementById('pro-chat-modal');
     if(chatModal) chatModal.remove();
 
@@ -266,12 +289,16 @@ function addProMessage(text, sender, isLoading = false) {
     return div.id = 'msg-' + Math.random();
 }
 
-// --- YARDIMCI FONKSİYONLAR ---
 function toggleLangMenu() { document.getElementById('lang-dropdown').classList.toggle('hidden'); document.getElementById('lang-dropdown').classList.toggle('flex'); }
 function setLanguage(lang) {
     state.lang = lang; localStorage.setItem('lang', lang);
     document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if(I18N[lang][key]) el.innerText = I18N[lang][key]; });
     document.getElementById('lang-dropdown').classList.add('hidden'); document.getElementById('lang-dropdown').classList.remove('flex');
+    
+    // Çevirici input placeholder'ı güncelle
+    const input = document.getElementById('conv-amount');
+    if (input) input.placeholder = I18N[lang]?.enter_amount || "Enter Amount...";
+    
     startNewsTicker();
     updateLangIcon(); 
 }
@@ -318,14 +345,12 @@ function getPrice(code) {
     return (1 / rateCode) * state.rates[state.baseCurrency]; 
 }
 
-// --- GRAFİK VE SİMÜLASYON ---
 function toggleVSMode() { if(state.vsPair) { state.vsPair = null; document.getElementById('vs-btn').classList.remove('bg-indigo-600', 'text-white'); } else { state.vsPair = 'BTC'; document.getElementById('vs-btn').classList.add('bg-indigo-600', 'text-white'); } initChart('mainChart', state.theme); startLiveSimulations(); }
 function swapChart() { state.isChartSwapped = !state.isChartSwapped; startLiveSimulations(); }
 
 function initChart(id, color) {
     const canvas = document.getElementById(id);
     if(!canvas) return;
-    
     if(charts[id]) charts[id].destroy(); 
     const ctx = canvas.getContext('2d');
     let datasets = [{ label: id==='mainChart'?state.chartPair:state.cryptoChartPair, data: Array(20).fill(null), borderColor: color, borderWidth: 3, backgroundColor: createGradient(ctx, color), fill: true, tension: 0.4, pointRadius: 0 }];
@@ -343,21 +368,14 @@ function startLiveSimulations() {
         let val1 = getPrice(state.chartPair); 
         if(state.isChartSwapped) val1 = 1/val1;
         const valVS = state.vsPair ? getPrice(state.vsPair) : 0;
-        
-        mainChart.data.datasets[0].data = Array(20).fill(val1).map(v => v * (1+(Math.random()-0.5)*0.01));
-        
         intervals['main'] = setInterval(() => {
             const arr1 = mainChart.data.datasets[0].data; const next1 = arr1[arr1.length-1] * (1 + (Math.random()-0.5)*0.005); arr1.shift(); arr1.push(next1);
             if(state.vsPair) { const arr2 = mainChart.data.datasets[1].data; const next2 = arr2[arr2.length-1] * (1 + (Math.random()-0.5)*0.01); arr2.shift(); arr2.push(next2); }
             mainChart.update();
             const sym = state.isChartSwapped ? state.chartPair : getSymbol(state.baseCurrency);
             document.getElementById('chart-price').innerText = `${sym} ${next1.toLocaleString(undefined, {maximumFractionDigits:4})}`;
-            
-            if(state.isChartSwapped) {
-                    document.getElementById('chart-symbol').innerHTML = `<span class="base-curr-text">${state.baseCurrency}</span>/${state.chartPair}`;
-            } else {
-                    document.getElementById('chart-symbol').innerHTML = `${state.chartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
-            }
+            if(state.isChartSwapped) { document.getElementById('chart-symbol').innerHTML = `<span class="base-curr-text">${state.baseCurrency}</span>/${state.chartPair}`; } 
+            else { document.getElementById('chart-symbol').innerHTML = `${state.chartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`; }
         }, 1000);
     }
     
@@ -379,7 +397,6 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
 
-// --- MENÜ VE PORTFÖY İŞLEMLERİ (BUTONSUZ KARTLAR) ---
 function openSelector(mode) {
     state.drawerMode = mode; document.getElementById('selector-drawer').classList.remove('hidden'); setTimeout(() => document.getElementById('drawer-panel').classList.remove('translate-y-full'), 10);
     const list = document.getElementById('drawer-list'); let items = []; let activeList = []; 
@@ -465,24 +482,31 @@ function updateBaseCurrencyUI() {
     const flagUrl = getFlagUrl(state.baseCurrency); const imgEl = document.getElementById('settings-flag'); const iconEl = document.getElementById('settings-globe-icon'); if (flagUrl) { imgEl.src = flagUrl; imgEl.style.display = 'block'; iconEl.classList.add('hidden'); } else { imgEl.style.display = 'none'; iconEl.classList.remove('hidden'); lucide.createIcons(); } 
 }
 function updateConverterUI() { document.getElementById('code-from').innerText = state.convFrom; document.getElementById('code-to').innerText = state.convTo; const f1 = document.getElementById('flag-from'); const f2 = document.getElementById('flag-to'); const u1 = getFlagUrl(state.convFrom); const u2 = getFlagUrl(state.convTo); if(u1) { f1.src = u1; f1.style.display='block'; } else f1.style.display='none'; if(u2) { f2.src = u2; f2.style.display='block'; } else f2.style.display='none'; }
-function convert() { const amt = parseFloat(document.getElementById('conv-amount').value) || 0; const rate = state.rates[state.convTo] / state.rates[state.convFrom]; const res = amt * rate; document.getElementById('conv-result').innerText = `${res.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})} ${state.convTo}`; }
+function convert() { 
+    const inputVal = document.getElementById('conv-amount').value;
+    if(!inputVal) { document.getElementById('conv-result').innerText = '---'; return; }
+    const amt = parseFloat(inputVal);
+    const rate = state.rates[state.convTo] / state.rates[state.convFrom]; 
+    const res = amt * rate; 
+    document.getElementById('conv-result').innerText = `${res.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})} ${state.convTo}`; 
+}
 function swapCurrencies() { [state.convFrom, state.convTo] = [state.convTo, state.convFrom]; updateConverterUI(); convert(); }
 
-// **BUTONSUZ VE TEMİZ KARTLAR**
+function nav(page) { document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById('page-' + page).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('text-[var(--theme-color)]', 'active'); b.classList.add('text-slate-400'); b.style.color = ''; }); const btn = document.getElementById('nav-' + page); if(btn) { btn.classList.add('text-[var(--theme-color)]', 'active'); btn.classList.remove('text-slate-400'); btn.style.color = state.theme; } if(document.getElementById('sidebar').style.transform === 'translateX(0px)') toggleSidebar(); }
+function toggleSidebar() { const sb = document.getElementById('sidebar'); const isOpen = sb.style.transform === 'translateX(0px)'; sb.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)'; document.getElementById('overlay').classList.toggle('hidden', isOpen); }
+
+// --- SON TEMİZLİK (BUTONSUZ KARTLAR) ---
 function renderGrid() { 
     const container = document.getElementById('dashboard-grid'); 
     const sym = getSymbol(state.baseCurrency); 
-    
     if(state.rates['XAU'] && !state.favs.includes('XAU')) { state.favs.push('XAU'); }
 
     container.innerHTML = state.favs.map(curr => { 
         const val = getPrice(curr); 
         const flagUrl = getFlagUrl(curr);
-        let imgTag = '';
+        let imgTag = flagUrl ? `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">` : `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`;
         if (curr === 'XAU') imgTag = `<div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 border border-yellow-200"><i data-lucide="coins" size="16"></i></div>`;
         else if (curr === 'XAG') imgTag = `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200"><i data-lucide="disc" size="16"></i></div>`;
-        else if (flagUrl) imgTag = `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">`;
-        else imgTag = `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`;
         
         return `
         <div onclick="openChartModal('${curr}')" class="relative cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition group">
@@ -493,7 +517,6 @@ function renderGrid() {
             <div><p class="font-bold text-slate-500 text-xs">${curr}/${state.baseCurrency}</p><p class="font-bold text-xl text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:3})}</p></div>
         </div>`; 
     }).join(''); 
-    
     lucide.createIcons();
 }
 
@@ -504,6 +527,3 @@ function renderCryptoGrid() {
         return `<div onclick="openChartModal('${c}')" class="cursor-pointer bg-white dark:bg-cardDark p-5 rounded-[1.5rem] neon-box card-pop flex items-center justify-between gap-2 shadow-sm active:scale-95 transition"><div class="flex items-center gap-3 flex-1 min-w-0"><img src="https://assets.coincap.io/assets/icons/${icon}@2x.png" class="w-10 h-10 rounded-full shadow-lg flex-shrink-0 bg-white object-cover" onerror="this.src='https://assets.coincap.io/assets/icons/btc@2x.png'"><div class="min-w-0"><span class="font-bold text-lg text-slate-800 dark:text-white block truncate">${c}</span><span class="text-xs text-slate-400 block truncate">Coin</span></div></div><div class="text-right flex-shrink-0"><p class="font-bold text-base text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:2})}</p><p class="text-[10px] text-green-500 font-medium">+1.2%</p></div></div>`; 
     }).join(''); 
 }
-
-function nav(page) { document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById('page-' + page).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('text-[var(--theme-color)]', 'active'); b.classList.add('text-slate-400'); b.style.color = ''; }); const btn = document.getElementById('nav-' + page); if(btn) { btn.classList.add('text-[var(--theme-color)]', 'active'); btn.classList.remove('text-slate-400'); btn.style.color = state.theme; } if(document.getElementById('sidebar').style.transform === 'translateX(0px)') toggleSidebar(); }
-function toggleSidebar() { const sb = document.getElementById('sidebar'); const isOpen = sb.style.transform === 'translateX(0px)'; sb.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)'; document.getElementById('overlay').classList.toggle('hidden', isOpen); }
