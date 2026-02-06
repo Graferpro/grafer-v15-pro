@@ -212,18 +212,20 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
-// --- AI MODAL FONKSİYONU (OTOMATİK YARATMA ÖZELLİKLİ) ---
+// --- AI MODAL FONKSİYONU (Z-INDEX 9999 - EN ÜST KATMAN) ---
 async function openAIModal() {
-    // 1. Önce AI Modalı var mı kontrol et, yoksa oluştur (Garanti Çözüm)
+    console.log("AI Butonuna Basıldı!"); // Hata ayıklama için
+
+    // 1. Önce AI Modalı var mı kontrol et, yoksa oluştur
     let aiModal = document.getElementById('ai-modal');
     if (!aiModal) {
         aiModal = document.createElement('div');
         aiModal.id = 'ai-modal';
-        // En üst katmanda (z-100) görünsün
-        aiModal.className = 'fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
+        // DİKKAT: z-[9999] yaptık. Grafiğin (z-90) çok çok üstünde olacak.
+        aiModal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
         aiModal.innerHTML = `
             <div class="bg-white dark:bg-[#1e222d] w-full max-w-md rounded-2xl p-6 shadow-2xl border border-gray-200 dark:border-gray-700 relative">
-                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition">
+                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition cursor-pointer z-50">
                     <i data-lucide="x" size="24"></i>
                 </button>
                 <div class="flex items-center gap-3 mb-4">
@@ -231,33 +233,32 @@ async function openAIModal() {
                         <i data-lucide="bot" size="24"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-white" data-i18n="ai_title">AI Analiz Asistanı</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="ai_subtitle">GPT-4o Piyasa Yorumu</p>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">AI Analiz Asistanı</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">GPT-4 Piyasa Yorumu</p>
                     </div>
                 </div>
                 <div id="ai-content" class="bg-slate-50 dark:bg-black/20 p-4 rounded-xl text-sm text-slate-700 dark:text-slate-300 min-h-[100px] flex items-center justify-center">
                     </div>
                 <div class="mt-4 text-center">
-                    <p class="text-[10px] text-slate-400">Yatırım tavsiyesi değildir. / Not financial advice.</p>
+                    <p class="text-[10px] text-slate-400">Yatırım tavsiyesi değildir.</p>
                 </div>
             </div>
         `;
         document.body.appendChild(aiModal);
-        lucide.createIcons(); // İkonları yenile
+        lucide.createIcons();
     }
 
-    // 2. Modalı Göster
+    // 2. Modalı Göster (Hidden class'ını kaldır)
     aiModal.classList.remove('hidden');
 
     // 3. Verileri Hazırla
     const titleEl = document.getElementById('tv-title');
-    // Eğer grafik başlığı yoksa varsayılanı al
     let rawSymbol = titleEl ? titleEl.innerText.split('/')[0].trim() : state.chartPair;
     const price = getPrice(rawSymbol).toFixed(4);
 
     // 4. "Yükleniyor" Animasyonu
     const content = document.getElementById('ai-content');
-    const loadingText = state.lang === 'tr' ? 'Piyasa taranıyor, analiz hazırlanıyor...' : 'Scanning market, preparing analysis...';
+    const loadingText = state.lang === 'tr' ? 'Piyasa taranıyor...' : 'Scanning market...';
     
     content.innerHTML = `
         <div class="flex flex-col items-center gap-3">
@@ -265,7 +266,7 @@ async function openAIModal() {
             <span class="animate-pulse text-indigo-500 font-medium text-xs">${loadingText}</span>
         </div>`;
 
-    // 5. Backend'e Gönder (Dil ayarını state'den alıyoruz)
+    // 5. Backend'e Gönder
     try {
         const res = await fetch('/api/ai', {
             method: 'POST',
@@ -273,61 +274,56 @@ async function openAIModal() {
             body: JSON.stringify({ 
                 symbol: rawSymbol, 
                 price: price, 
-                lang: state.lang // Burada 'tr' gidiyorsa Türkçe cevap gelecek
+                lang: state.lang // Burası 'tr' gidiyorsa Türkçe gelmeli
             })
         });
 
         const data = await res.json();
 
         if (data.message) {
-            // Daktilo efekti ile yazdırabiliriz ama şimdilik direkt basıyoruz
-            content.innerHTML = `<p class="leading-relaxed">${data.message}</p>`;
+            content.innerHTML = `<p class="leading-relaxed font-medium">${data.message}</p>`;
         } else {
-            content.innerText = "Bağlantı sorunu oluştu. Lütfen tekrar deneyin.";
+            content.innerText = "Bağlantı sorunu oluştu.";
         }
     } catch (err) {
         console.error(err);
-        content.innerText = "Yapay zeka şu an yanıt veremiyor. (API Key veya Kota sorunu olabilir)";
+        content.innerText = "Yapay zeka yanıt veremiyor (API Key Hatası).";
     }
 }
 
 
-// --- TRADINGVIEW GRAFİK AÇMA (BUTON DÜZELTİLDİ) ---
+// --- TRADINGVIEW GRAFİK AÇMA (BUTON FIX) ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
-    
-    // Eğer modal daha önce oluşturulmadıysa oluştur
     if(!modal) {
         modal = document.createElement('div');
         modal.id = 'tv-modal';
-        // z-[90] grafiği en üste koyar
+        // Grafik Modalı z-90 seviyesinde
         modal.className = 'fixed inset-0 z-[90] hidden bg-black flex flex-col';
         modal.innerHTML = `
-            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722] relative z-50">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722] relative z-[100]">
                 <h3 id="tv-title" class="text-white font-bold text-lg">GRAFİK</h3>
-                <button onclick="document.getElementById('tv-modal').classList.add('hidden')" class="text-gray-400 hover:text-white p-2"><i data-lucide="x" size="24"></i></button>
+                <button onclick="document.getElementById('tv-modal').classList.add('hidden')" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
             </div>
             
             <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative z-0"></div>
             
-            <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center relative z-50 shadow-2xl">
+            <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center relative z-[100] shadow-2xl">
                  <button onclick="openAIModal()" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg transition transform active:scale-95">
                     <i data-lucide="bot"></i> AI Analiz
                  </button>
-                 <span class="text-xs text-gray-500">TradingView verileri</span>
+                 <span class="text-xs text-gray-500">TradingView & OpenAI</span>
             </div>
         `;
         document.body.appendChild(modal);
         lucide.createIcons();
     }
 
-    // Modalı Göster
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
 
-    // Sembol Seçimi (GBP Düzeltmesi Dahil)
+    // Sembol mantığı aynı...
     let tvSymbol = "FX:EURUSD"; 
-
     if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
     else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
     else if(symbol === 'TRY') tvSymbol = "FX:USDTRY";
@@ -343,21 +339,11 @@ function openChartModal(symbol) {
 
     if(window.TradingView) {
         new TradingView.widget({
-            "autosize": true,
-            "symbol": tvSymbol,
-            "interval": "D",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": state.lang === 'tr' ? 'tr' : 'en',
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "tv-chart-container"
+            "autosize": true, "symbol": tvSymbol, "interval": "D", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": state.lang === 'tr' ? 'tr' : 'en', "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_side_toolbar": false, "allow_symbol_change": true, "container_id": "tv-chart-container"
         });
     }
 }
+
 
 // --- MENÜ VE PORTFÖY İŞLEMLERİ ---
 function openSelector(mode) {
