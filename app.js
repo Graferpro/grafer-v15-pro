@@ -33,7 +33,6 @@ let state = {
     cryptoChartPair: 'BTC'
 };
 let charts = {}; let intervals = {};
-
 window.onload = async () => {
     lucide.createIcons();
     initLanguage();
@@ -41,16 +40,49 @@ window.onload = async () => {
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
     
+    // 1. Önce Verileri Çek
     await fetchData(); 
     
+    // --- YENİ: OTOMATİK ÜLKE VE PARA BİRİMİ TANIMA ---
+    // Sadece ilk girişte çalışır (Limit dostu)
+    if (!localStorage.getItem('user_location_set')) {
+        try {
+            const geoRes = await fetch('https://ipapi.co/json/');
+            const geoData = await geoRes.json();
+            const userCurrency = geoData.currency; // Örn: TRY, USD, EUR
+            
+            if (userCurrency && state.rates[userCurrency]) {
+                // Eğer bu para favorilerde yoksa ekle
+                if (!state.favs.includes(userCurrency)) {
+                    state.favs.push(userCurrency);
+                    // Ayarları kaydet
+                    localStorage.setItem('favs_v9', JSON.stringify(state.favs));
+                    localStorage.setItem('baseCurr', userCurrency); // Ana paranı da o yap
+                    state.baseCurrency = userCurrency;
+                }
+            }
+            // Bir daha sorma diye işaretle
+            localStorage.setItem('user_location_set', 'true');
+        } catch (err) {
+            console.log("Konum bulunamadı, varsayılan devam ediliyor.");
+        }
+    }
+    // ------------------------------------------------
+
     const neonToggle = document.getElementById('neon-toggle'); neonToggle.checked = state.neonEnabled;
     if(state.neonEnabled) document.body.classList.add('neon-active');
     neonToggle.addEventListener('change', (e) => { state.neonEnabled = e.target.checked; localStorage.setItem('neonEnabled', state.neonEnabled); if(state.neonEnabled) document.body.classList.add('neon-active'); else document.body.classList.remove('neon-active'); });
 
     if(state.baseCurrency === state.chartPair) state.chartPair = 'EUR';
     updateUI(); startLiveSimulations(); startNewsTicker();
+    
+    // TradingView scriptini yükle
+    const tvScript = document.createElement('script'); tvScript.src = 'https://s3.tradingview.com/tv.js'; document.head.appendChild(tvScript);
+
     document.getElementById('theme-toggle').addEventListener('change', (e) => { document.documentElement.classList.toggle('dark', e.target.checked); });
 };
+
+
 
 // --- API BAĞLANTISI (GÜVENLİ & GARANTİLİ) ---
 async function fetchData() { 
