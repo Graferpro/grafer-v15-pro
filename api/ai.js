@@ -5,10 +5,12 @@ export default async function handler(req, res) {
     if (!API_KEY) return res.status(500).json({ error: 'OpenAI Anahtarı Eksik!' });
 
     const { symbol, price, lang } = req.body;
-    if (!symbol || !price) return res.status(400).json({ error: 'Eksik veri' });
+    
+    // Dil ayarını kesinleştiriyoruz
+    // Eğer gelen lang 'tr' ise Türkçe, değilse İngilizce olsun
+    const systemLang = lang === 'tr' ? 'Turkish' : 'English';
 
-    // Hangi dilde konuşacağını kesinleştiriyoruz
-    const targetLang = lang === 'tr' ? 'Türkçe' : 'İngilizce';
+    if (!symbol || !price) return res.status(400).json({ error: 'Eksik veri' });
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -18,16 +20,16 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini", // Veya "gpt-3.5-turbo"
+                model: "gpt-4o-mini", 
                 messages: [
                     { 
-                        // SİSTEM EMRİ: Dil kuralını buraya koyduk, artık kaçamaz.
+                        // KESİN DİL EMRİ
                         "role": "system", 
-                        "content": `Sen uzman bir finans asistanısın. Yanıtlarını KESİNLİKLE ${targetLang} dilinde ver. Asla başka dil kullanma.` 
+                        "content": `You are a financial analyst. You MUST respond in ${systemLang} language ONLY. Do not use any other language.` 
                     },
                     { 
                         "role": "user", 
-                        "content": `${symbol} şu an ${price} fiyatında. Teknik analiz göstergelerine (RSI, Trend) dayalıymış gibi duran, yatırım tavsiyesi içermeyen, 2 cümlelik kısa bir piyasa yorumu yap.` 
+                        "content": `Asset: ${symbol}, Price: ${price}. Give a very short (2 sentences), professional technical analysis comment (RSI, Trend) as if you are an expert.` 
                     }
                 ],
                 max_tokens: 150,
