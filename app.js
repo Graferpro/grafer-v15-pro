@@ -239,26 +239,6 @@ function openAIModal() {
         content.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }, 1500);
 }
-
-
-    // 4. Grafiği Çiz (Simsiyah Tema)
-    if(window.TradingView) {
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": tvSymbol,
-            "interval": "D",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": state.lang === 'tr' ? 'tr' : 'en',
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "tv-chart-container"
-        });
-    }
-}
 // --- YENİ: PROFESYONEL GRAFİK AÇMA FONKSİYONU (GBP DÜZELTİLDİ) ---
 function openChartModal(symbol) {
     // 1. Modalı oluştur (Eğer yoksa)
@@ -301,6 +281,26 @@ function openChartModal(symbol) {
     else if(symbol === 'SOL') tvSymbol = "BINANCE:SOLUSDT";
     else if(symbol === 'XRP') tvSymbol = "BINANCE:XRPUSDT";
     else tvSymbol = `FX:USD${symbol}`; // Diğer hepsi için USD başta (USDJPY, USDCAD vs.)
+
+
+    // 4. Grafiği Çiz (Simsiyah Tema)
+    if(window.TradingView) {
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": tvSymbol,
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": state.lang === 'tr' ? 'tr' : 'en',
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "container_id": "tv-chart-container"
+        });
+    }
+}
 
     // 4. Grafiği Çiz (Simsiyah Tema)
     if(window.TradingView) {
