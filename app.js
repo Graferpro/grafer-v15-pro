@@ -240,7 +240,26 @@ function openAIModal() {
     }, 1500);
 }
 
-// --- YENİ: PROFESYONEL GRAFİK AÇMA FONKSİYONU ---
+
+    // 4. Grafiği Çiz (Simsiyah Tema)
+    if(window.TradingView) {
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": tvSymbol,
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": state.lang === 'tr' ? 'tr' : 'en',
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "container_id": "tv-chart-container"
+        });
+    }
+}
+// --- YENİ: PROFESYONEL GRAFİK AÇMA FONKSİYONU (GBP DÜZELTİLDİ) ---
 function openChartModal(symbol) {
     // 1. Modalı oluştur (Eğer yoksa)
     let modal = document.getElementById('tv-modal');
@@ -255,7 +274,7 @@ function openChartModal(symbol) {
             </div>
             <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative"></div>
             <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center">
-                 <button onclick="alert('Yakında: Gerçek AI Analizi buraya gelecek!')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2"><i data-lucide="bot"></i> AI Analiz</button>
+                 <button onclick="openAIModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2"><i data-lucide="bot"></i> AI Analiz</button>
                  <span class="text-xs text-gray-500">TradingView verileri kullanılır</span>
             </div>
         `;
@@ -267,16 +286,21 @@ function openChartModal(symbol) {
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
 
-    // 3. Sembolü TradingView formatına çevir
+    // 3. Sembolü TradingView formatına çevir (HATA BURADA DÜZELTİLDİ)
     let tvSymbol = "FX:EURUSD"; // Varsayılan
-    if(symbol === 'USD') tvSymbol = "FX:EURUSD"; // Dolar için Euro paritesi
+
+    if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
     else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
     else if(symbol === 'TRY') tvSymbol = "FX:USDTRY";
+    else if(symbol === 'GBP') tvSymbol = "FX:GBPUSD"; // <-- DÜZELTME: Sterlin ters yazılır
+    else if(symbol === 'AUD') tvSymbol = "FX:AUDUSD"; // <-- EKSTRA: Avustralya Doları da ters yazılır
     else if(symbol === 'XAU') tvSymbol = "OANDA:XAUUSD"; // Altın
     else if(symbol === 'XAG') tvSymbol = "OANDA:XAGUSD"; // Gümüş
     else if(symbol === 'BTC') tvSymbol = "BINANCE:BTCUSDT";
     else if(symbol === 'ETH') tvSymbol = "BINANCE:ETHUSDT";
-    else tvSymbol = `FX:USD${symbol}`;
+    else if(symbol === 'SOL') tvSymbol = "BINANCE:SOLUSDT";
+    else if(symbol === 'XRP') tvSymbol = "BINANCE:XRPUSDT";
+    else tvSymbol = `FX:USD${symbol}`; // Diğer hepsi için USD başta (USDJPY, USDCAD vs.)
 
     // 4. Grafiği Çiz (Simsiyah Tema)
     if(window.TradingView) {
