@@ -212,25 +212,60 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
-// --- AI FONKSİYONU (GERÇEK BAĞLANTI) ---
+// --- AI MODAL FONKSİYONU (OTOMATİK YARATMA ÖZELLİKLİ) ---
 async function openAIModal() {
-    // 1. Hangi varlığa bakıyoruz? (Grafik başlığından alalım)
+    // 1. Önce AI Modalı var mı kontrol et, yoksa oluştur (Garanti Çözüm)
+    let aiModal = document.getElementById('ai-modal');
+    if (!aiModal) {
+        aiModal = document.createElement('div');
+        aiModal.id = 'ai-modal';
+        // En üst katmanda (z-100) görünsün
+        aiModal.className = 'fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
+        aiModal.innerHTML = `
+            <div class="bg-white dark:bg-[#1e222d] w-full max-w-md rounded-2xl p-6 shadow-2xl border border-gray-200 dark:border-gray-700 relative">
+                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition">
+                    <i data-lucide="x" size="24"></i>
+                </button>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                        <i data-lucide="bot" size="24"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white" data-i18n="ai_title">AI Analiz Asistanı</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="ai_subtitle">GPT-4o Piyasa Yorumu</p>
+                    </div>
+                </div>
+                <div id="ai-content" class="bg-slate-50 dark:bg-black/20 p-4 rounded-xl text-sm text-slate-700 dark:text-slate-300 min-h-[100px] flex items-center justify-center">
+                    </div>
+                <div class="mt-4 text-center">
+                    <p class="text-[10px] text-slate-400">Yatırım tavsiyesi değildir. / Not financial advice.</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(aiModal);
+        lucide.createIcons(); // İkonları yenile
+    }
+
+    // 2. Modalı Göster
+    aiModal.classList.remove('hidden');
+
+    // 3. Verileri Hazırla
     const titleEl = document.getElementById('tv-title');
+    // Eğer grafik başlığı yoksa varsayılanı al
     let rawSymbol = titleEl ? titleEl.innerText.split('/')[0].trim() : state.chartPair;
-    
-    // Fiyatı bulalım
     const price = getPrice(rawSymbol).toFixed(4);
 
-    // 2. Modalı aç ve "Yükleniyor" göster
-    document.getElementById('ai-modal').classList.remove('hidden');
+    // 4. "Yükleniyor" Animasyonu
     const content = document.getElementById('ai-content');
+    const loadingText = state.lang === 'tr' ? 'Piyasa taranıyor, analiz hazırlanıyor...' : 'Scanning market, preparing analysis...';
+    
     content.innerHTML = `
-        <div class="flex flex-col items-center gap-2">
-            <span class="animate-pulse text-indigo-400 font-bold">${I18N[state.lang].analyzing || 'Analyzing...'}</span>
-            <span class="text-xs text-slate-400">GPT-4 Piyasayı Tarıyor...</span>
+        <div class="flex flex-col items-center gap-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <span class="animate-pulse text-indigo-500 font-medium text-xs">${loadingText}</span>
         </div>`;
 
-    // 3. Backend'e (api/ai.js) sor
+    // 5. Backend'e Gönder (Dil ayarını state'den alıyoruz)
     try {
         const res = await fetch('/api/ai', {
             method: 'POST',
@@ -238,21 +273,21 @@ async function openAIModal() {
             body: JSON.stringify({ 
                 symbol: rawSymbol, 
                 price: price, 
-                lang: state.lang 
+                lang: state.lang // Burada 'tr' gidiyorsa Türkçe cevap gelecek
             })
         });
 
         const data = await res.json();
 
         if (data.message) {
-            // Gelen cevabı daktilo efektiyle yazdırabiliriz veya direkt basabiliriz
-            content.innerText = data.message;
+            // Daktilo efekti ile yazdırabiliriz ama şimdilik direkt basıyoruz
+            content.innerHTML = `<p class="leading-relaxed">${data.message}</p>`;
         } else {
-            content.innerText = "Bağlantı yoğunluğu nedeniyle analiz alınamadı. Tekrar deneyin.";
+            content.innerText = "Bağlantı sorunu oluştu. Lütfen tekrar deneyin.";
         }
     } catch (err) {
         console.error(err);
-        content.innerText = "Yapay zeka şu an meşgul. (API Key Hatası olabilir)";
+        content.innerText = "Yapay zeka şu an yanıt veremiyor. (API Key veya Kota sorunu olabilir)";
     }
 }
 
