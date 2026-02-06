@@ -39,7 +39,8 @@ window.onload = async () => {
     setTheme(state.theme);
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
-    
+    initChatBot(); // CHATBOT BURADA BAŞLIYOR
+};
     // 1. Önce Verileri Çek
     await fetchData(); 
     
@@ -212,54 +213,27 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
-// --- YENİ SİSTEM: GRAFİK İÇİNDE AI (PENCERE YOK, SORUN YOK) ---
-
-// 1. Grafik Açma Fonksiyonu
+// --- 1. TEMİZ VE PROFESYONEL GRAFİK (AI YOK, SADECE GRAFİK) ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(!modal) {
         modal = document.createElement('div');
         modal.id = 'tv-modal';
-        modal.className = 'fixed inset-0 z-[50] hidden bg-black flex flex-col';
-        // HTML yapısı
+        // z-[40] yaptık, Chatbot (z-50) onun üstünde durabilsin diye
+        modal.className = 'fixed inset-0 z-[40] hidden bg-black flex flex-col';
         modal.innerHTML = `
             <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722]">
                 <h3 id="tv-title" class="text-white font-bold text-lg">GRAFİK</h3>
-                <button onclick="closeChartModal()" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
+                <button onclick="document.getElementById('tv-modal').classList.add('hidden')" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
             </div>
-            
             <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative"></div>
-            
-            <div id="ai-container" class="p-6 bg-[#131722] border-t border-gray-800 min-h-[120px] flex flex-col justify-center relative z-[60]">
-                 <div id="ai-initial-view" class="flex justify-between items-center">
-                     <button onclick="runAIAnalysis('${symbol}')" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg transition transform active:scale-95">
-                        <i data-lucide="bot"></i> AI Analiz Başlat
-                     </button>
-                     <span class="text-xs text-gray-500">TradingView & OpenAI</span>
-                 </div>
-                 
-                 <div id="ai-loading-view" class="hidden flex items-center gap-3">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-500"></div>
-                    <span class="text-indigo-400 text-sm animate-pulse">Piyasa taranıyor... (Lütfen bekleyin)</span>
-                 </div>
-
-                 <div id="ai-result-view" class="hidden">
-                    <p id="ai-text" class="text-slate-300 text-sm leading-relaxed font-medium"></p>
-                 </div>
-            </div>
         `;
         document.body.appendChild(modal);
         lucide.createIcons();
     }
 
-    // Modalı aç ve sıfırla
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
-    
-    // Her açılışta AI kısmını eski haline getir (Reset)
-    document.getElementById('ai-initial-view').classList.remove('hidden');
-    document.getElementById('ai-loading-view').classList.add('hidden');
-    document.getElementById('ai-result-view').classList.add('hidden');
 
     // Sembol Seçimi
     let tvSymbol = "FX:EURUSD"; 
@@ -278,62 +252,108 @@ function openChartModal(symbol) {
 
     if(window.TradingView) {
         new TradingView.widget({
-            "autosize": true, "symbol": tvSymbol, "interval": "D", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": state.lang === 'tr' ? 'tr' : 'en', "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_side_toolbar": false, "allow_symbol_change": true, "container_id": "tv-chart-container"
+            "autosize": true, "symbol": tvSymbol, "interval": "D", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "tr", "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_side_toolbar": false, "allow_symbol_change": true, "container_id": "tv-chart-container"
         });
     }
 }
 
-function closeChartModal() {
-    document.getElementById('tv-modal').classList.add('hidden');
+// --- 2. YENİ GRAFER AI CHATBOT (SAĞ ALT KÖŞE) ---
+// Bu fonksiyon sayfa açılınca otomatik çalışsın diye window.onload'a ekleyeceğiz
+function initChatBot() {
+    if(document.getElementById('chatbot-btn')) return;
+
+    // 1. Yuvarlak Chat Butonu
+    const btn = document.createElement('button');
+    btn.id = 'chatbot-btn';
+    btn.className = 'fixed bottom-6 right-6 z-[60] w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-110 active:scale-95';
+    btn.innerHTML = '<i data-lucide="message-circle" size="28"></i>';
+    btn.onclick = toggleChatWindow;
+    document.body.appendChild(btn);
+
+    // 2. Chat Penceresi (WhatsApp Tarzı)
+    const win = document.createElement('div');
+    win.id = 'chatbot-window';
+    win.className = 'fixed bottom-24 right-6 z-[60] w-80 h-96 bg-white dark:bg-[#1e222d] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 hidden flex flex-col overflow-hidden';
+    win.innerHTML = `
+        <div class="bg-indigo-600 p-4 flex justify-between items-center text-white">
+            <div class="flex items-center gap-2">
+                <i data-lucide="bot" size="20"></i>
+                <span class="font-bold">Grafer AI</span>
+            </div>
+            <button onclick="toggleChatWindow()" class="hover:text-gray-200"><i data-lucide="x" size="20"></i></button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-black/20 text-sm">
+            <div class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl max-w-[85%]">
+                Merhaba! Ben Grafer AI. Piyasa, dolar, altın veya kripto hakkında ne sormak istersin? 🤖
+            </div>
+        </div>
+        <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e222d] flex gap-2">
+            <input type="text" id="chat-input" placeholder="Bir soru sor..." class="flex-1 bg-slate-100 dark:bg-black/10 border-none rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none" onkeypress="handleEnter(event)">
+            <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-lg transition"><i data-lucide="send" size="18"></i></button>
+        </div>
+    `;
+    document.body.appendChild(win);
+    lucide.createIcons();
 }
 
-// 2. AI Analizi Çalıştıran Fonksiyon (DİREKT ÇALIŞACAK)
-async function runAIAnalysis(symbol) {
-    // Görünümü değiştir: Butonu gizle, Yükleniyor'u aç
-    document.getElementById('ai-initial-view').classList.add('hidden');
-    document.getElementById('ai-loading-view').classList.remove('hidden');
+function toggleChatWindow() {
+    const w = document.getElementById('chatbot-window');
+    w.classList.toggle('hidden');
+    if(!w.classList.contains('hidden')) document.getElementById('chat-input').focus();
+}
 
-    const price = getPrice(symbol).toFixed(4);
-    
-    // DİL AYARI (KESİN ÇÖZÜM)
-    // Eğer state.lang 'tr' ise VEYA 'auto' olup tarayıcı Türkçe ise -> 'tr' gönder.
-    let currentLang = state.lang;
-    if(currentLang === 'auto') {
-        currentLang = navigator.language.slice(0, 2) === 'tr' ? 'tr' : 'en';
-    }
+function handleEnter(e) { if(e.key === 'Enter') sendChatMessage(); }
+
+async function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if(!msg) return;
+
+    // Kullanıcı mesajını ekle
+    addMessage(msg, 'user');
+    input.value = '';
+
+    // "Yazıyor..." efekti
+    const loadingId = addMessage('Analiz yapıyorum...', 'bot', true);
 
     try {
         const res = await fetch('/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                symbol: symbol, 
-                price: price, 
-                lang: currentLang // Artık kesin olarak 'tr' veya 'en' gidiyor
-            })
+            body: JSON.stringify({ message: msg })
         });
-
         const data = await res.json();
-
-        // Yükleniyor'u gizle, Sonucu göster
-        document.getElementById('ai-loading-view').classList.add('hidden');
-        const resultDiv = document.getElementById('ai-result-view');
-        const textP = document.getElementById('ai-text');
         
-        resultDiv.classList.remove('hidden');
+        // Yükleniyor mesajını kaldır
+        document.getElementById(loadingId).remove();
         
-        if (data.message) {
-            textP.innerHTML = `<span class="text-indigo-400 font-bold">AI Yorumu:</span> ${data.message}`;
+        if(data.reply) {
+            addMessage(data.reply, 'bot');
         } else {
-            textP.innerText = "Bağlantı hatası. Lütfen tekrar deneyin.";
+            addMessage("Bir hata oluştu, tekrar dene.", 'bot');
         }
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById('ai-loading-view').classList.add('hidden');
-        document.getElementById('ai-initial-view').classList.remove('hidden'); // Butonu geri getir
-        alert("Yapay zeka şu an meşgul veya API Anahtarı hatalı.");
+    } catch (e) {
+        document.getElementById(loadingId).remove();
+        addMessage("Bağlantı hatası.", 'bot');
     }
+}
+
+function addMessage(text, sender, isLoading = false) {
+    const container = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+    div.id = id;
+    
+    if (sender === 'user') {
+        div.className = 'ml-auto bg-indigo-600 text-white p-3 rounded-tl-xl rounded-tr-xl rounded-bl-xl max-w-[85%] shadow-sm';
+    } else {
+        div.className = `bg-white dark:bg-cardDark text-slate-800 dark:text-white p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl max-w-[85%] shadow-sm border border-gray-100 dark:border-gray-700 ${isLoading ? 'animate-pulse text-indigo-500' : ''}`;
+    }
+    
+    div.innerText = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight; // En alta kaydır
+    return id;
 }
 
 // --- MENÜ VE PORTFÖY İŞLEMLERİ ---
