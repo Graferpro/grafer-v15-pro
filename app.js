@@ -34,7 +34,7 @@ window.onload = async () => {
     setTheme(state.theme);
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
-    
+   
     // 1. Önce Verileri Çek
     await fetchData(); 
     
@@ -280,7 +280,7 @@ function openProAIChat(symbol) {
                         </div>
                         <div>
                             <h3 class="font-bold text-sm">Grafer AI Asistanı</h3>
-                            <p class="text-[10px] opacity-80">Online • Türkçe</p>
+                            <p class="text-[10px] opacity-80">Online • Çok Dilli</p>
                         </div>
                     </div>
                     <button onclick="document.getElementById('pro-chat-modal').classList.add('hidden')" class="hover:text-gray-200 cursor-pointer"><i data-lucide="x" size="20"></i></button>
@@ -307,11 +307,8 @@ function openProAIChat(symbol) {
     // İlk Mesajı Gönder (Otomatik Analiz)
     const initialPrompt = `${symbol} (Fiyat: ${price}) hakkında kısa teknik analiz ve piyasa yorumu yapar mısın?`;
     
-    // Kullanıcı sormuş gibi ekle ama gizli yapabiliriz ya da açık.
-    // Biz direkt botun cevabını bekleyelim.
-    addProMessage(`Merhaba! ${symbol} analizini hazırlıyorum, lütfen bekle...`, 'bot', true);
-    
     // AI'ya Sor
+    addProMessage(`Merhaba! ${symbol} analizini hazırlıyorum, lütfen bekle...`, 'bot', true);
     askOpenAI(initialPrompt, true);
 }
 
@@ -331,7 +328,6 @@ function sendProMessage() {
 async function askOpenAI(message, isInitial) {
     const container = document.getElementById('pro-chat-messages');
     
-    // Eğer ilk mesaj değilse "Yazıyor..." göster
     let loadingId = null;
     if(!isInitial) loadingId = addProMessage("Yazıyor...", 'bot', true);
 
@@ -339,13 +335,15 @@ async function askOpenAI(message, isInitial) {
         const res = await fetch('/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ 
+                message: message,
+                lang: state.lang // Sadece açılış dilini bildirmek için
+            })
         });
         const data = await res.json();
         
-        // Yükleniyorları kaldır
         if(loadingId) document.getElementById(loadingId).remove();
-        if(isInitial) container.innerHTML = ''; // İlk "Hazırlıyorum" mesajını sil
+        if(isInitial) container.innerHTML = ''; 
 
         if(data.reply) {
             addProMessage(data.reply, 'bot');
