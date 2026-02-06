@@ -212,117 +212,56 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
-// --- AI MODAL FONKSİYONU (Z-INDEX 9999 - EN ÜST KATMAN) ---
-async function openAIModal() {
-    console.log("AI Butonuna Basıldı!"); // Hata ayıklama için
+// --- YENİ SİSTEM: GRAFİK İÇİNDE AI (PENCERE YOK, SORUN YOK) ---
 
-    // 1. Önce AI Modalı var mı kontrol et, yoksa oluştur
-    let aiModal = document.getElementById('ai-modal');
-    if (!aiModal) {
-        aiModal = document.createElement('div');
-        aiModal.id = 'ai-modal';
-        // DİKKAT: z-[9999] yaptık. Grafiğin (z-90) çok çok üstünde olacak.
-        aiModal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
-        aiModal.innerHTML = `
-            <div class="bg-white dark:bg-[#1e222d] w-full max-w-md rounded-2xl p-6 shadow-2xl border border-gray-200 dark:border-gray-700 relative">
-                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition cursor-pointer z-50">
-                    <i data-lucide="x" size="24"></i>
-                </button>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                        <i data-lucide="bot" size="24"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">AI Analiz Asistanı</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">GPT-4 Piyasa Yorumu</p>
-                    </div>
-                </div>
-                <div id="ai-content" class="bg-slate-50 dark:bg-black/20 p-4 rounded-xl text-sm text-slate-700 dark:text-slate-300 min-h-[100px] flex items-center justify-center">
-                    </div>
-                <div class="mt-4 text-center">
-                    <p class="text-[10px] text-slate-400">Yatırım tavsiyesi değildir.</p>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(aiModal);
-        lucide.createIcons();
-    }
-
-    // 2. Modalı Göster (Hidden class'ını kaldır)
-    aiModal.classList.remove('hidden');
-
-    // 3. Verileri Hazırla
-    const titleEl = document.getElementById('tv-title');
-    let rawSymbol = titleEl ? titleEl.innerText.split('/')[0].trim() : state.chartPair;
-    const price = getPrice(rawSymbol).toFixed(4);
-
-    // 4. "Yükleniyor" Animasyonu
-    const content = document.getElementById('ai-content');
-    const loadingText = state.lang === 'tr' ? 'Piyasa taranıyor...' : 'Scanning market...';
-    
-    content.innerHTML = `
-        <div class="flex flex-col items-center gap-3">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <span class="animate-pulse text-indigo-500 font-medium text-xs">${loadingText}</span>
-        </div>`;
-
-    // 5. Backend'e Gönder
-    try {
-        const res = await fetch('/api/ai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                symbol: rawSymbol, 
-                price: price, 
-                lang: state.lang // Burası 'tr' gidiyorsa Türkçe gelmeli
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.message) {
-            content.innerHTML = `<p class="leading-relaxed font-medium">${data.message}</p>`;
-        } else {
-            content.innerText = "Bağlantı sorunu oluştu.";
-        }
-    } catch (err) {
-        console.error(err);
-        content.innerText = "Yapay zeka yanıt veremiyor (API Key Hatası).";
-    }
-}
-
-
-// --- TRADINGVIEW GRAFİK AÇMA (BUTON FIX) ---
+// 1. Grafik Açma Fonksiyonu
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(!modal) {
         modal = document.createElement('div');
         modal.id = 'tv-modal';
-        // Grafik Modalı z-90 seviyesinde
-        modal.className = 'fixed inset-0 z-[90] hidden bg-black flex flex-col';
+        modal.className = 'fixed inset-0 z-[50] hidden bg-black flex flex-col';
+        // HTML yapısı
         modal.innerHTML = `
-            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722] relative z-[100]">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722]">
                 <h3 id="tv-title" class="text-white font-bold text-lg">GRAFİK</h3>
-                <button onclick="document.getElementById('tv-modal').classList.add('hidden')" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
+                <button onclick="closeChartModal()" class="text-gray-400 hover:text-white p-2 cursor-pointer"><i data-lucide="x" size="24"></i></button>
             </div>
             
-            <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative z-0"></div>
+            <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative"></div>
             
-            <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center relative z-[100] shadow-2xl">
-                 <button onclick="openAIModal()" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg transition transform active:scale-95">
-                    <i data-lucide="bot"></i> AI Analiz
-                 </button>
-                 <span class="text-xs text-gray-500">TradingView & OpenAI</span>
+            <div id="ai-container" class="p-6 bg-[#131722] border-t border-gray-800 min-h-[120px] flex flex-col justify-center relative z-[60]">
+                 <div id="ai-initial-view" class="flex justify-between items-center">
+                     <button onclick="runAIAnalysis('${symbol}')" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg transition transform active:scale-95">
+                        <i data-lucide="bot"></i> AI Analiz Başlat
+                     </button>
+                     <span class="text-xs text-gray-500">TradingView & OpenAI</span>
+                 </div>
+                 
+                 <div id="ai-loading-view" class="hidden flex items-center gap-3">
+                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-500"></div>
+                    <span class="text-indigo-400 text-sm animate-pulse">Piyasa taranıyor... (Lütfen bekleyin)</span>
+                 </div>
+
+                 <div id="ai-result-view" class="hidden">
+                    <p id="ai-text" class="text-slate-300 text-sm leading-relaxed font-medium"></p>
+                 </div>
             </div>
         `;
         document.body.appendChild(modal);
         lucide.createIcons();
     }
 
+    // Modalı aç ve sıfırla
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
+    
+    // Her açılışta AI kısmını eski haline getir (Reset)
+    document.getElementById('ai-initial-view').classList.remove('hidden');
+    document.getElementById('ai-loading-view').classList.add('hidden');
+    document.getElementById('ai-result-view').classList.add('hidden');
 
-    // Sembol mantığı aynı...
+    // Sembol Seçimi
     let tvSymbol = "FX:EURUSD"; 
     if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
     else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
@@ -344,6 +283,58 @@ function openChartModal(symbol) {
     }
 }
 
+function closeChartModal() {
+    document.getElementById('tv-modal').classList.add('hidden');
+}
+
+// 2. AI Analizi Çalıştıran Fonksiyon (DİREKT ÇALIŞACAK)
+async function runAIAnalysis(symbol) {
+    // Görünümü değiştir: Butonu gizle, Yükleniyor'u aç
+    document.getElementById('ai-initial-view').classList.add('hidden');
+    document.getElementById('ai-loading-view').classList.remove('hidden');
+
+    const price = getPrice(symbol).toFixed(4);
+    
+    // DİL AYARI (KESİN ÇÖZÜM)
+    // Eğer state.lang 'tr' ise VEYA 'auto' olup tarayıcı Türkçe ise -> 'tr' gönder.
+    let currentLang = state.lang;
+    if(currentLang === 'auto') {
+        currentLang = navigator.language.slice(0, 2) === 'tr' ? 'tr' : 'en';
+    }
+
+    try {
+        const res = await fetch('/api/ai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                symbol: symbol, 
+                price: price, 
+                lang: currentLang // Artık kesin olarak 'tr' veya 'en' gidiyor
+            })
+        });
+
+        const data = await res.json();
+
+        // Yükleniyor'u gizle, Sonucu göster
+        document.getElementById('ai-loading-view').classList.add('hidden');
+        const resultDiv = document.getElementById('ai-result-view');
+        const textP = document.getElementById('ai-text');
+        
+        resultDiv.classList.remove('hidden');
+        
+        if (data.message) {
+            textP.innerHTML = `<span class="text-indigo-400 font-bold">AI Yorumu:</span> ${data.message}`;
+        } else {
+            textP.innerText = "Bağlantı hatası. Lütfen tekrar deneyin.";
+        }
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('ai-loading-view').classList.add('hidden');
+        document.getElementById('ai-initial-view').classList.remove('hidden'); // Butonu geri getir
+        alert("Yapay zeka şu an meşgul veya API Anahtarı hatalı.");
+    }
+}
 
 // --- MENÜ VE PORTFÖY İŞLEMLERİ ---
 function openSelector(mode) {
