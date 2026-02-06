@@ -5,8 +5,19 @@ export default async function handler(req, res) {
 
     const { message, lang } = req.body;
     
-    // 1. Sistemin ana dilini belirle (Açılış için)
-    const baseLang = (lang === 'tr') ? 'Turkish' : 'English';
+    // Dil Haritası (Genişletilebilir)
+    const langMap = {
+        'tr': 'Turkish',
+        'en': 'English',
+        'pl': 'Polish',
+        'ru': 'Russian',
+        'ka': 'Georgian',
+        'de': 'German',
+        'fr': 'French'
+    };
+
+    // Frontend'den gelen 'tr', 'pl' kodunu tam isme çevir (Yoksa English yap)
+    const targetLang = langMap[lang] || 'English';
 
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -17,11 +28,11 @@ export default async function handler(req, res) {
                 messages: [
                     { 
                         "role": "system", 
-                        // DİL EMRİ GÜNCELLENDİ: Esnek ve Akıllı.
-                        "content": `Sen 'Grafer AI' adında finansal bir asistansın. 
-                        Varsayılan dilin: ${baseLang}. İlk cevabı bu dilde ver.
-                        ANCAK: Eğer kullanıcı farklı bir dilde (örneğin Lehçe, Rusça, Almanca) soru sorarsa, DERHAL o dile geç ve o dilde cevap ver.
-                        Cevapların kısa, profesyonel ve yatırım tavsiyesi içermeyen (YTD) şekilde olsun.` 
+                        "content": `Senin adın 'Grafer Pro Ai Asistan'. 
+                        Sen profesyonel bir finans uzmanısın.
+                        GÖREVİN: Kullanıcıya YALNIZCA ${targetLang} dilinde cevap vermek.
+                        Kullanıcı başka dilde sorsa bile sen ısrarla ${targetLang} konuş.
+                        Cevapların kısa, net ve yatırım tavsiyesi içermeyen (YTD) şekilde olsun.` 
                     },
                     { 
                         "role": "user", 
