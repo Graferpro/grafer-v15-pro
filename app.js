@@ -22,7 +22,6 @@ const AI_MESSAGES = {
 };
 
 // --- STATE VE BAŞLANGIÇ ---
-// DİKKAT: 'favs_v9' yaparak listeyi sıfırladım ve XAU, XAG'yi varsayılan olarak ekledim.
 let state = {
     rates: {}, baseCurrency: localStorage.getItem('baseCurr') || 'PLN', chartPair: 'USD', isChartSwapped: false, vsPair: null,
     lang: localStorage.getItem('lang') || 'auto', theme: localStorage.getItem('theme') || '#4f46e5',
@@ -33,6 +32,7 @@ let state = {
     cryptoChartPair: 'BTC'
 };
 let charts = {}; let intervals = {};
+
 window.onload = async () => {
     lucide.createIcons();
     initLanguage();
@@ -43,31 +43,26 @@ window.onload = async () => {
     // 1. Önce Verileri Çek
     await fetchData(); 
     
-    // --- YENİ: OTOMATİK ÜLKE VE PARA BİRİMİ TANIMA ---
-    // Sadece ilk girişte çalışır (Limit dostu)
+    // --- OTOMATİK ÜLKE VE PARA BİRİMİ TANIMA ---
     if (!localStorage.getItem('user_location_set')) {
         try {
             const geoRes = await fetch('https://ipapi.co/json/');
             const geoData = await geoRes.json();
-            const userCurrency = geoData.currency; // Örn: TRY, USD, EUR
+            const userCurrency = geoData.currency; 
             
             if (userCurrency && state.rates[userCurrency]) {
-                // Eğer bu para favorilerde yoksa ekle
                 if (!state.favs.includes(userCurrency)) {
                     state.favs.push(userCurrency);
-                    // Ayarları kaydet
                     localStorage.setItem('favs_v9', JSON.stringify(state.favs));
-                    localStorage.setItem('baseCurr', userCurrency); // Ana paranı da o yap
+                    localStorage.setItem('baseCurr', userCurrency);
                     state.baseCurrency = userCurrency;
                 }
             }
-            // Bir daha sorma diye işaretle
             localStorage.setItem('user_location_set', 'true');
         } catch (err) {
             console.log("Konum bulunamadı, varsayılan devam ediliyor.");
         }
     }
-    // ------------------------------------------------
 
     const neonToggle = document.getElementById('neon-toggle'); neonToggle.checked = state.neonEnabled;
     if(state.neonEnabled) document.body.classList.add('neon-active');
@@ -82,23 +77,18 @@ window.onload = async () => {
     document.getElementById('theme-toggle').addEventListener('change', (e) => { document.documentElement.classList.toggle('dark', e.target.checked); });
 };
 
-
-
-// --- API BAĞLANTISI (GÜVENLİ & GARANTİLİ) ---
+// --- API BAĞLANTISI ---
 async function fetchData() { 
     try { 
-        // 1. Döviz Verilerini Çek
         const res = await fetch('/api/forex'); 
         const data = await res.json(); 
         
         if(data.results) {
             state.rates = data.results; 
         } else {
-             // Döviz API çalışmazsa demo veriler
              state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0};
         }
 
-        // 2. Altın ve Gümüş (HATA OLSA BİLE GÖSTER)
         try {
             const goldRes = await fetch('/api/gold');
             if (!goldRes.ok) throw new Error("API Hatası");
@@ -110,9 +100,8 @@ async function fetchData() {
             } else { throw new Error("Veri yok"); }
         } catch (goldErr) {
             console.log("Altın API hatası, Demo Modu aktif:", goldErr);
-            // KESİN GÖRÜNMESİ İÇİN DEMO VERİ
-            state.rates['XAU'] = 1 / 2650.50; // Ons Altın
-            state.rates['XAG'] = 1 / 31.20;   // Ons Gümüş
+            state.rates['XAU'] = 1 / 2650.50; 
+            state.rates['XAG'] = 1 / 31.20;
         }
 
     } catch(e) { 
@@ -120,7 +109,8 @@ async function fetchData() {
         state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2650, 'XAG': 1/31};
     } 
 }
-// --- DİL VE AYAR FONKSİYONLARI ---
+
+// --- YARDIMCI FONKSİYONLAR ---
 function initLanguage() {
     if(state.lang === 'auto') { const navLang = navigator.language.slice(0, 2); state.lang = ['tr','en','ru','pl','ka'].includes(navLang) ? navLang : 'en'; }
     setLanguage(state.lang);
@@ -222,14 +212,8 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
-// --- INTERFACE (ARAYÜZ) VE TRADINGVIEW FONKSİYONLARI ---
 
-// 1. TradingView Widget'ını Yükle (Otomatik)
-const tvScript = document.createElement('script');
-tvScript.src = 'https://s3.tradingview.com/tv.js';
-document.head.appendChild(tvScript);
-
-// --- MODAL VE DRAWERS ---
+// --- MODAL FONKSİYONLARI ---
 function openAIModal() {
     document.getElementById('ai-modal').classList.remove('hidden');
     const content = document.getElementById('ai-content');
@@ -239,9 +223,9 @@ function openAIModal() {
         content.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }, 1500);
 }
-// --- YENİ: PROFESYONEL GRAFİK AÇMA FONKSİYONU (GBP DÜZELTİLDİ) ---
+
+// --- TRADINGVIEW GRAFİK AÇMA ---
 function openChartModal(symbol) {
-    // 1. Modalı oluştur (Eğer yoksa)
     let modal = document.getElementById('tv-modal');
     if(!modal) {
         modal = document.createElement('div');
@@ -262,28 +246,24 @@ function openChartModal(symbol) {
         lucide.createIcons();
     }
 
-    // 2. Modalı Göster
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
 
-    // 3. Sembolü TradingView formatına çevir (HATA BURADA DÜZELTİLDİ)
-    let tvSymbol = "FX:EURUSD"; // Varsayılan
+    let tvSymbol = "FX:EURUSD"; 
 
     if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
     else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
     else if(symbol === 'TRY') tvSymbol = "FX:USDTRY";
-    else if(symbol === 'GBP') tvSymbol = "FX:GBPUSD"; // <-- DÜZELTME: Sterlin ters yazılır
-    else if(symbol === 'AUD') tvSymbol = "FX:AUDUSD"; // <-- EKSTRA: Avustralya Doları da ters yazılır
-    else if(symbol === 'XAU') tvSymbol = "OANDA:XAUUSD"; // Altın
-    else if(symbol === 'XAG') tvSymbol = "OANDA:XAGUSD"; // Gümüş
+    else if(symbol === 'GBP') tvSymbol = "FX:GBPUSD"; 
+    else if(symbol === 'AUD') tvSymbol = "FX:AUDUSD"; 
+    else if(symbol === 'XAU') tvSymbol = "OANDA:XAUUSD"; 
+    else if(symbol === 'XAG') tvSymbol = "OANDA:XAGUSD"; 
     else if(symbol === 'BTC') tvSymbol = "BINANCE:BTCUSDT";
     else if(symbol === 'ETH') tvSymbol = "BINANCE:ETHUSDT";
     else if(symbol === 'SOL') tvSymbol = "BINANCE:SOLUSDT";
     else if(symbol === 'XRP') tvSymbol = "BINANCE:XRPUSDT";
-    else tvSymbol = `FX:USD${symbol}`; // Diğer hepsi için USD başta (USDJPY, USDCAD vs.)
+    else tvSymbol = `FX:USD${symbol}`;
 
-
-    // 4. Grafiği Çiz (Simsiyah Tema)
     if(window.TradingView) {
         new TradingView.widget({
             "autosize": true,
@@ -302,26 +282,7 @@ function openChartModal(symbol) {
     }
 }
 
-    // 4. Grafiği Çiz (Simsiyah Tema)
-    if(window.TradingView) {
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": tvSymbol,
-            "interval": "D",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": state.lang === 'tr' ? 'tr' : 'en',
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "tv-chart-container"
-        });
-    }
-}
-
-// --- DRAWER (SEÇİM MENÜSÜ) ---
+// --- MENÜ VE PORTFÖY İŞLEMLERİ ---
 function openSelector(mode) {
     state.drawerMode = mode; document.getElementById('selector-drawer').classList.remove('hidden'); setTimeout(() => document.getElementById('drawer-panel').classList.remove('translate-y-full'), 10);
     const list = document.getElementById('drawer-list'); let items = []; let activeList = []; 
@@ -367,7 +328,6 @@ function handleSelection(code) {
 function closeAllDrawers() { document.getElementById('drawer-panel').classList.add('translate-y-full'); setTimeout(() => document.getElementById('selector-drawer').classList.add('hidden'), 300); }
 function filterDrawer() { const query = document.getElementById('search-input').value.toLowerCase(); const btns = document.getElementById('drawer-list').getElementsByTagName('button'); for(let btn of btns) { btn.style.display = btn.innerText.toLowerCase().includes(query) ? 'flex' : 'none'; } }
 
-// --- PORTFÖY DÜZELTİLDİ ---
 function openAddAssetSelector() { state.tempAsset = null; openSelector('add-asset'); }
 
 function confirmAddAsset() { 
@@ -375,18 +335,16 @@ function confirmAddAsset() {
     const amt = parseFloat(amtInput.value); 
     
     if(state.tempAsset && amt > 0) { 
-        // Varsa üstüne ekle, yoksa yeni oluştur
         const existing = state.portfolio.find(p => p.symbol === state.tempAsset);
         if(existing) {
             existing.amount += amt;
         } else {
             state.portfolio.push({symbol: state.tempAsset, amount: amt}); 
         }
-        
         localStorage.setItem('portfolio', JSON.stringify(state.portfolio)); 
         document.getElementById('quantity-modal').classList.add('hidden'); 
         renderPortfolio();
-        amtInput.value = ''; // Inputu temizle
+        amtInput.value = ''; 
     } else {
         alert("Lütfen geçerli bir miktar girin.");
     }
@@ -403,7 +361,6 @@ function renderPortfolio() {
 }
 function clearPortfolio() { state.portfolio = []; localStorage.setItem('portfolio', JSON.stringify(state.portfolio)); renderPortfolio(); }
 
-// --- EKRAN GÜNCELLEME VE GRID ---
 function updateBaseCurrencyUI() { 
     document.querySelectorAll('.base-curr-text').forEach(el => el.innerText = state.baseCurrency); 
     document.querySelectorAll('.base-curr-symbol').forEach(el => el.innerText = getSymbol(state.baseCurrency)); 
@@ -414,7 +371,6 @@ function renderGrid() {
     const container = document.getElementById('dashboard-grid'); 
     const sym = getSymbol(state.baseCurrency); 
     
-    // Altın otomatik ekleme kontrolü
     if(state.rates['XAU'] && !state.favs.includes('XAU')) { state.favs.push('XAU'); }
 
     container.innerHTML = state.favs.map(curr => { 
@@ -426,7 +382,6 @@ function renderGrid() {
         else if (flagUrl) imgTag = `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">`;
         else imgTag = `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`;
         
-        // DÜZELTME BURADA: opacity-50'yi kaldırdım ve rengi text-indigo-500 yaptım.
         return `
         <div onclick="openChartModal('${curr}')" class="relative cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition group">
             <div class="absolute top-3 right-3 text-indigo-500 dark:text-indigo-400">
@@ -440,12 +395,10 @@ function renderGrid() {
     lucide.createIcons();
 }
 
-
 function renderCryptoGrid() { 
     const container = document.getElementById('crypto-grid'); const sym = getSymbol(state.baseCurrency); 
     container.innerHTML = state.cryptoFavs.map(c => { 
         const val = getPrice(c); const icon = CRYPTO_ICONS[c] || 'btc'; 
-        // Tıklanınca Grafik Aç (onclick eklendi)
         return `<div onclick="openChartModal('${c}')" class="cursor-pointer bg-white dark:bg-cardDark p-5 rounded-[1.5rem] neon-box card-pop flex items-center justify-between gap-2 shadow-sm active:scale-95 transition"><div class="flex items-center gap-3 flex-1 min-w-0"><img src="https://assets.coincap.io/assets/icons/${icon}@2x.png" class="w-10 h-10 rounded-full shadow-lg flex-shrink-0 bg-white object-cover" onerror="this.src='https://assets.coincap.io/assets/icons/btc@2x.png'"><div class="min-w-0"><span class="font-bold text-lg text-slate-800 dark:text-white block truncate">${c}</span><span class="text-xs text-slate-400 block truncate">Coin</span></div></div><div class="text-right flex-shrink-0"><p class="font-bold text-base text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:2})}</p><p class="text-[10px] text-green-500 font-medium">+1.2%</p></div></div>`; 
     }).join(''); 
 }
