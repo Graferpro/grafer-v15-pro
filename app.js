@@ -1,5 +1,5 @@
-// --- VERSİYON (GLOBAL SÜRÜM) ---
-const APP_VERSION = '2.1'; 
+// --- VERSİYON (CACHE TEMİZLEMEK İÇİN) ---
+const APP_VERSION = '2.2'; 
 
 // --- SABİT VERİLER ---
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
@@ -8,16 +8,16 @@ const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':
 
 // DİL DESTEĞİ
 const I18N = {
-    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing..." },
     tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor..." },
+    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing..." },
     pl: { dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "Reset", crypto_assets: "Aktywa Krypto", theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie..." },
     ru: { dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "Сброс", crypto_assets: "Криптоактивы", theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ..." }
 };
 
 const NEWS_DATA = {
-    en: ["Bitcoin approaching 100K target.", "Gold prices hit new record.", "Central Bank announces rate decision.", "Tech stocks rallying today."],
-    tr: ["Bitcoin 100K hedefine ilerliyor.", "Altın fiyatları rekor tazeledi.", "Merkez Bankası faiz kararını açıkladı.", "Teknoloji hisselerinde ralli var."],
-    pl: ["Bitcoin zbliża się do poziomu 100 tys.", "Ceny złota biją nowe rekordy.", "Bank Centralny ogłasza decyzję ws. stóp.", "Akcje technologiczne rosną."]
+    tr: ["Bitcoin 100K hedefine ilerliyor.", "Altın fiyatları rekor tazeledi.", "Merkez Bankası faiz kararını açıkladı.", "Teknoloji hisselerinde ralli var.", "Dolar endeksi kritik seviyede."],
+    en: ["Bitcoin approaching 100K target.", "Gold prices hit new record.", "Central Bank announces rate decision.", "Tech stocks rallying today.", "Dollar index at critical level."],
+    pl: ["Bitcoin zbliża się do poziomu 100 tys.", "Ceny złota biją nowe rekordy.", "Bank Centralny ogłasza decyzję ws. stóp.", "Akcje technologiczne rosną.", "Indeks dolara na krytycznym poziomie."]
 };
 
 // --- STATE ---
@@ -42,23 +42,21 @@ window.onload = async () => {
 
     lucide.createIcons();
 
-    // 1. DİL AYARI (DEFAULT: ENGLISH)
+    // 1. DİL AYARI (TELEFONA GÖRE)
     if (!localStorage.getItem('lang')) {
-        state.lang = 'en'; // Global Standard
-        localStorage.setItem('lang', 'en');
+        const phoneLang = navigator.language.slice(0, 2); // 'tr', 'pl', 'en'
+        state.lang = I18N[phoneLang] ? phoneLang : 'en'; 
+        localStorage.setItem('lang', state.lang);
     } else {
         state.lang = localStorage.getItem('lang');
     }
     setLanguage(state.lang);
     
-    // DİL İKONUNU BELİRGİN YAP (Glow Efekti)
+    // **DİL İKONU EFEKTİ (Glow)**
     const langBtn = document.getElementById('lang-dropdown')?.previousElementSibling; 
-    // Eğer bir buton varsa (dropdown'dan önceki), ona stil ver
     if(langBtn) {
-        langBtn.classList.add('text-indigo-500', 'font-bold', 'animate-pulse');
-        langBtn.style.border = "1px solid rgba(99, 102, 241, 0.5)";
-        langBtn.style.borderRadius = "8px";
-        langBtn.style.padding = "5px";
+        langBtn.classList.add('text-yellow-400', 'font-bold', 'animate-pulse');
+        langBtn.style.textShadow = "0 0 10px rgba(250, 204, 21, 0.5)";
     }
     
     // 2. TEMA VE GRAFİK
@@ -69,7 +67,7 @@ window.onload = async () => {
     // 3. VERİLERİ ÇEK
     await fetchData(); 
     
-    // 4. KONUMA GÖRE PARA BİRİMİ (Dilden Bağımsız)
+    // 4. KONUMA GÖRE PARA BİRİMİ
     await detectLocationCurrency(); 
 
     // Neon
@@ -102,8 +100,6 @@ async function detectLocationCurrency() {
         if (userCurrency && (state.rates[userCurrency] || userCurrency === 'PLN' || userCurrency === 'TRY')) {
             state.baseCurrency = userCurrency;
             localStorage.setItem('baseCurr', userCurrency);
-            
-            // Listeye ekle
             if (!state.favs.includes(userCurrency)) {
                 state.favs.push(userCurrency);
                 localStorage.setItem('favs_v9', JSON.stringify(state.favs));
@@ -125,7 +121,7 @@ async function fetchData() {
     } catch(e) { state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2650, 'XAG': 1/31}; } 
 }
 
-// --- GRAFİK AÇMA (SABİT AI BUTONU) ---
+// --- GRAFİK AÇMA (TEMİZLİK YAPILDI: BUTONLAR KALDIRILDI) ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(modal) modal.remove();
@@ -150,7 +146,6 @@ function openChartModal(symbol) {
     document.body.appendChild(modal);
     lucide.createIcons();
 
-    // TradingView Widget
     let tvSymbol = "FX:EURUSD"; 
     if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
     else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
@@ -158,6 +153,9 @@ function openChartModal(symbol) {
     else if(symbol === 'GBP') tvSymbol = "FX:GBPUSD"; 
     else if(symbol === 'XAU') tvSymbol = "OANDA:XAUUSD"; 
     else if(symbol === 'BTC') tvSymbol = "BINANCE:BTCUSDT";
+    else if(symbol === 'ETH') tvSymbol = "BINANCE:ETHUSDT";
+    else if(symbol === 'SOL') tvSymbol = "BINANCE:SOLUSDT";
+    else if(symbol === 'XRP') tvSymbol = "BINANCE:XRPUSDT";
     else tvSymbol = `FX:USD${symbol}`;
 
     if(window.TradingView) {
@@ -203,7 +201,7 @@ function openProAIChat(symbol) {
     document.body.appendChild(chatModal);
     lucide.createIcons();
     
-    // Otomatik İlk Mesaj (İngilizce Başlar, kullanıcıya göre değişir)
+    // Otomatik İlk Mesaj (Bukalemun olduğu için İngilizce başlar, kullanıcıyla değişir)
     addProMessage(`Grafer Pro AI: Ready! Analyzing ${symbol}...`, 'bot', true);
     
     // AI'ya istek at
@@ -231,9 +229,7 @@ async function askOpenAI(message, isInitial) {
         const res = await fetch('/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                message: message // Sadece mesajı gönderiyoruz, dili AI çözecek
-            })
+            body: JSON.stringify({ message: message }) // Dil kodu göndermiyoruz, AI çözecek
         });
         const data = await res.json();
         
@@ -269,11 +265,21 @@ function setLanguage(lang) {
     document.getElementById('lang-dropdown').classList.add('hidden'); document.getElementById('lang-dropdown').classList.remove('flex');
     startNewsTicker();
 }
+
+// **GÜNCELLENMİŞ HABER ŞERİDİ (TIKLANABİLİR)**
 function startNewsTicker() {
     const container = document.getElementById('news-ticker');
     const msgs = NEWS_DATA[state.lang] || NEWS_DATA['en'];
-    container.innerHTML = msgs.map(m => `<div class="ticker-item"><span style="color:var(--theme-color)">●</span> ${m}</div>`).join('');
+    
+    // Habere tıklayınca Google'da o haberi aratır (Akıllı Çözüm)
+    container.innerHTML = msgs.map(m => {
+        const query = encodeURIComponent(m);
+        return `<a href="https://www.google.com/search?q=${query}&tbm=nws" target="_blank" class="ticker-item cursor-pointer hover:text-indigo-400 transition">
+            <span style="color:var(--theme-color)">●</span> ${m}
+        </a>`;
+    }).join('');
 }
+
 function getSymbol(curr) {
     const symbols = {'PLN':'zł', 'USD':'$', 'EUR':'€', 'TRY':'₺', 'GBP':'£'};
     return symbols[curr] || curr;
@@ -451,6 +457,8 @@ function updateBaseCurrencyUI() {
     document.getElementById('settings-code').innerText = state.baseCurrency; 
     const flagUrl = getFlagUrl(state.baseCurrency); const imgEl = document.getElementById('settings-flag'); const iconEl = document.getElementById('settings-globe-icon'); if (flagUrl) { imgEl.src = flagUrl; imgEl.style.display = 'block'; iconEl.classList.add('hidden'); } else { imgEl.style.display = 'none'; iconEl.classList.remove('hidden'); lucide.createIcons(); } 
 }
+
+// **ANA SAYFADAKİ KARTLAR (BUTONLAR KALDIRILDI - SADECE GRAFİK AÇAR)**
 function renderGrid() { 
     const container = document.getElementById('dashboard-grid'); 
     const sym = getSymbol(state.baseCurrency); 
