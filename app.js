@@ -40,7 +40,7 @@ window.onload = async () => {
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
     initChatBot(); // CHATBOT BURADA BAŞLIYOR
-};
+   
     // 1. Önce Verileri Çek
     await fetchData(); 
     
