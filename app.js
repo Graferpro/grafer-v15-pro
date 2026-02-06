@@ -257,31 +257,40 @@ async function openAIModal() {
 }
 
 
-// --- TRADINGVIEW GRAFİK AÇMA ---
+// --- TRADINGVIEW GRAFİK AÇMA (BUTON DÜZELTİLDİ) ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
+    
+    // Eğer modal daha önce oluşturulmadıysa oluştur
     if(!modal) {
         modal = document.createElement('div');
         modal.id = 'tv-modal';
+        // z-[90] grafiği en üste koyar
         modal.className = 'fixed inset-0 z-[90] hidden bg-black flex flex-col';
         modal.innerHTML = `
-            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722]">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722] relative z-50">
                 <h3 id="tv-title" class="text-white font-bold text-lg">GRAFİK</h3>
                 <button onclick="document.getElementById('tv-modal').classList.add('hidden')" class="text-gray-400 hover:text-white p-2"><i data-lucide="x" size="24"></i></button>
             </div>
-            <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative"></div>
-            <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center">
-                 <button onclick="openAIModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2"><i data-lucide="bot"></i> AI Analiz</button>
-                 <span class="text-xs text-gray-500">TradingView verileri kullanılır</span>
+            
+            <div id="tv-chart-container" class="flex-1 w-full h-full bg-black relative z-0"></div>
+            
+            <div class="p-4 bg-[#131722] border-t border-gray-800 flex justify-between items-center relative z-50 shadow-2xl">
+                 <button onclick="openAIModal()" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg transition transform active:scale-95">
+                    <i data-lucide="bot"></i> AI Analiz
+                 </button>
+                 <span class="text-xs text-gray-500">TradingView verileri</span>
             </div>
         `;
         document.body.appendChild(modal);
         lucide.createIcons();
     }
 
+    // Modalı Göster
     modal.classList.remove('hidden');
     document.getElementById('tv-title').innerText = symbol + " / USD";
 
+    // Sembol Seçimi (GBP Düzeltmesi Dahil)
     let tvSymbol = "FX:EURUSD"; 
 
     if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
