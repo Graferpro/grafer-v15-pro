@@ -39,7 +39,9 @@ window.onload = async () => {
     setTheme(state.theme);
     initChart('mainChart', state.theme);
     initChart('cryptoChart', '#f97316');
-    initChatBot(); // CHATBOT BURADA BAŞLIYOR
+    
+    // Chatbot'u başlat
+    initChatBot(); 
    
     // 1. Önce Verileri Çek
     await fetchData(); 
@@ -181,7 +183,7 @@ function startLiveSimulations() {
     const valVS = state.vsPair ? getPrice(state.vsPair) : 0;
     
     mainChart.data.datasets[0].data = Array(20).fill(val1).map(v => v * (1+(Math.random()-0.5)*0.01));
-    if(state.vsPair) mainChart.data.datasets[1].data = Array(20).fill(valVS).map(v => v * (1+(Math.random()-0.5)*0.01));
+    if(state.vsPair) mainChart.data.datasets[1].data = Array(20).fill(valVS).map(v * (1+(Math.random()-0.5)*0.01));
     
     intervals['main'] = setInterval(() => {
         const arr1 = mainChart.data.datasets[0].data; const next1 = arr1[arr1.length-1] * (1 + (Math.random()-0.5)*0.005); arr1.shift(); arr1.push(next1);
@@ -213,13 +215,14 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
+
 // --- 1. TEMİZ VE PROFESYONEL GRAFİK (AI YOK, SADECE GRAFİK) ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(!modal) {
         modal = document.createElement('div');
         modal.id = 'tv-modal';
-        // z-[40] yaptık, Chatbot (z-50) onun üstünde durabilsin diye
+        // z-[40] yaptık, Chatbot (z-60) onun üstünde durabilsin diye
         modal.className = 'fixed inset-0 z-[40] hidden bg-black flex flex-col';
         modal.innerHTML = `
             <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722]">
@@ -258,7 +261,6 @@ function openChartModal(symbol) {
 }
 
 // --- 2. YENİ GRAFER AI CHATBOT (SAĞ ALT KÖŞE) ---
-// Bu fonksiyon sayfa açılınca otomatik çalışsın diye window.onload'a ekleyeceğiz
 function initChatBot() {
     if(document.getElementById('chatbot-btn')) return;
 
@@ -309,11 +311,9 @@ async function sendChatMessage() {
     const msg = input.value.trim();
     if(!msg) return;
 
-    // Kullanıcı mesajını ekle
     addMessage(msg, 'user');
     input.value = '';
 
-    // "Yazıyor..." efekti
     const loadingId = addMessage('Analiz yapıyorum...', 'bot', true);
 
     try {
@@ -324,7 +324,6 @@ async function sendChatMessage() {
         });
         const data = await res.json();
         
-        // Yükleniyor mesajını kaldır
         document.getElementById(loadingId).remove();
         
         if(data.reply) {
@@ -352,7 +351,7 @@ function addMessage(text, sender, isLoading = false) {
     
     div.innerText = text;
     container.appendChild(div);
-    container.scrollTop = container.scrollHeight; // En alta kaydır
+    container.scrollTop = container.scrollHeight; 
     return id;
 }
 
