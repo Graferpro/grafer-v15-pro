@@ -1,5 +1,5 @@
-// --- VERSİYON (CACHE TEMİZLİK) ---
-const APP_VERSION = '2.7'; 
+// --- VERSİYON (ZORUNLU GÜNCELLEME) ---
+const APP_VERSION = '2.9'; 
 
 // --- SABİT VERİLER ---
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
@@ -13,17 +13,13 @@ const NEWS_DATA = {
 const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
 const CURRENCY_NAMES = {'USD':'Dollar', 'EUR':'Euro', 'GBP':'Pound', 'TRY':'Lira', 'PLN':'Złoty', 'JPY':'Yen', 'RUB':'Ruble', 'GEL':'Lari', 'XAU':'Ons Altın', 'XAG':'Ons Gümüş'};
 
-// --- DİL AYARLARI (Gürcüce Eklendi & Sıfırla Düzeltildi) ---
+// --- DİL AYARLARI (GÜNCEL) ---
 const I18N = {
-    tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "SIFIRLA", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", close: "Kapat", enter_amount: "Miktar Girin...", amount: "MİKTAR", source: "KAYNAK", target: "HEDEF", result: "SONUÇ" },
-    
-    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "RESET", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", close: "Close", enter_amount: "Enter Amount...", amount: "AMOUNT", source: "SOURCE", target: "TARGET", result: "RESULT" },
-    
-    pl: { dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "RESETUJ", crypto_assets: "Aktywa Krypto", theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", ai_title: "Grafer Pro Ai Asystent", close: "Zamknij", enter_amount: "Wpisz kwotę...", amount: "ILOŚĆ", source: "ŹRÓDŁO", target: "CEL", result: "WYNIK" },
-    
-    ru: { dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "СБРОС", crypto_assets: "Криптоактивы", theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", ai_title: "Grafer Pro Ai Помощник", close: "Закрыть", enter_amount: "Введите сумму...", amount: "СУММА", source: "ИСТОЧНИК", target: "ЦЕЛЬ", result: "РЕЗУЛЬТАТ" },
-    
-    ka: { dark_mode: "ღამის რეჟიმი", dashboard: "ბაზარი", portfolio: "პორტფოლიო", crypto: "კრიპტო", converter: "კონვერტორი", settings: "პარამეტრები", market: "ბაზარი", edit: "რედაქტირება", total_asset: "სულ აქტივები", add: "დამატება", reset: "განულება", crypto_assets: "კრიპტო აქტივები", theme_color: "თემის ფერი", default_currency: "ნაგულისხმევი ვალუტა", ai_analysis: "AI ანალიზი", ai_title: "Grafer Pro Ai ასისტენტი", close: "დახურვა", enter_amount: "შეიყვანეთ თანხა...", amount: "თანხა", source: "წყარო", target: "მიზანი", result: "შედეგი" }
+    tr: { amount: "MİKTAR", source: "KAYNAK", target: "HEDEF", result: "SONUÇ", reset: "SIFIRLA", enter_amount: "Miktar Girin...", analyzing: "Analiz ediliyor...", close: "Kapat", live_rate: "CANLI KUR" },
+    en: { amount: "AMOUNT", source: "SOURCE", target: "TARGET", result: "RESULT", reset: "RESET", enter_amount: "Enter Amount...", analyzing: "Analyzing...", close: "Close", live_rate: "LIVE RATE" },
+    pl: { amount: "ILOŚĆ", source: "ŹRÓDŁO", target: "CEL", result: "WYNIK", reset: "RESETUJ", enter_amount: "Wpisz kwotę...", analyzing: "Analizowanie...", close: "Zamknij", live_rate: "KURS NA ŻYWO" },
+    ru: { amount: "СУММА", source: "ИСТОЧНИК", target: "ЦЕЛЬ", result: "РЕЗУЛЬТАТ", reset: "СБРОС", enter_amount: "Введите сумму...", analyzing: "Анализ...", close: "Закрыть", live_rate: "ЖИВОЙ КУРС" },
+    ka: { amount: "თანხა", source: "წყარო", target: "მიზანი", result: "შედეგი", reset: "განულება", enter_amount: "შეიყვანეთ თანხა...", analyzing: "ანალიზი...", close: "დახურვა", live_rate: "ცოცხალი კურსი" }
 };
 
 // --- STATE ---
@@ -38,8 +34,8 @@ let state = {
 };
 let charts = {}; let intervals = {};
 
+// --- BAŞLANGIÇ ---
 window.onload = async () => {
-    // 0. Cache Temizliği
     if (localStorage.getItem('app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('app_version', APP_VERSION);
@@ -51,105 +47,129 @@ window.onload = async () => {
     // 1. DİL AYARI
     if (!localStorage.getItem('lang')) {
         const phoneLang = navigator.language.slice(0, 2); 
-        // Desteklenen diller kontrolü
         const supported = ['tr', 'en', 'pl', 'ru', 'ka'];
         state.lang = supported.includes(phoneLang) ? phoneLang : 'en';
         localStorage.setItem('lang', state.lang);
     } else {
         state.lang = localStorage.getItem('lang');
     }
-    setLanguage(state.lang);
     
-    // 2. TEMİZLİK OPERASYONU (Hayalet Butonlar)
-    cleanUpUI();
-
-    // 3. TEMA VE GRAFİK
-    setTheme(state.theme);
-    initChart('mainChart', state.theme);
-    initChart('cryptoChart', '#f97316');
-    
-    // 4. VERİLERİ ÇEK & KONUM
+    // 2. VERİLERİ VE KONUMU ÇEK (Önce bunu yapmalıyız ki büyük kart dolsun)
     await fetchData(); 
     await detectLocationCurrency(); 
 
-    // Neon
-    const neonToggle = document.getElementById('neon-toggle'); 
-    if(neonToggle) {
-        neonToggle.checked = state.neonEnabled;
-        if(state.neonEnabled) document.body.classList.add('neon-active');
-        neonToggle.addEventListener('change', (e) => { state.neonEnabled = e.target.checked; localStorage.setItem('neonEnabled', state.neonEnabled); if(state.neonEnabled) document.body.classList.add('neon-active'); else document.body.classList.remove('neon-active'); });
-    }
-
-    // İlk açılış düzeltmeleri
-    fixConverterInput();
+    // 3. UI BAŞLAT
+    setLanguage(state.lang);
+    setTheme(state.theme);
+    
+    // TEMİZLİK VE DÜZELTMELER
+    cleanUpUI(); // Butonları sil
+    fixConverterInput(); // 0'ı sil
+    renderFeaturedCard(); // BÜYÜK KARTI DOLDUR
+    
     updateUI(); 
-    startLiveSimulations(); 
     startNewsTicker();
     
-    // TradingView
+    // TradingView (Sadece detaylar için)
     const tvScript = document.createElement('script'); tvScript.src = 'https://s3.tradingview.com/tv.js'; document.head.appendChild(tvScript);
-    document.getElementById('theme-toggle').addEventListener('change', (e) => { document.documentElement.classList.toggle('dark', e.target.checked); });
     
-    // Çevirici Reset Butonuna Dinleyici Ekle
-    const resetBtn = document.querySelector('#page-converter button.bg-slate-100'); // Sıfırla butonu
+    // Reset Butonu Dinleyicisi
+    const resetBtn = document.querySelector('#page-converter button.bg-slate-100');
     if(resetBtn) {
-        resetBtn.setAttribute('data-i18n', 'reset'); // Çeviri için işaretle
-        resetBtn.onclick = fixConverterInput; // Tıklayınca temizle
+        resetBtn.id = 'reset-btn-real';
+        resetBtn.onclick = fixConverterInput;
     }
 };
 
-// --- YENİ: ANA SAYFA BÜYÜK KART DÜZELTME (Featured Card) ---
+// --- KRİTİK: ANA SAYFA BÜYÜK KART (FEATURED CARD) ---
 function renderFeaturedCard() {
-    // Ana sayfadaki büyük beyaz kartı (chart-container olan yer) buluyoruz.
-    // Oraya grafik yerine, KONUMUN PARA BİRİMİNİ kocaman yazacağız.
-    const container = document.getElementById('chart-container');
-    if(!container) return;
+    // Grafik konteynerini bul
+    let container = document.getElementById('chart-container') || document.querySelector('.h-64.bg-white');
+    
+    // Eğer bulamazsa, "USD/PLN" yazan o büyük beyaz alanı bulmaya çalış
+    if(!container) {
+        const allDivs = document.querySelectorAll('div');
+        for(let div of allDivs) {
+            // İçinde "Analiza AI" butonu olan div'i buluyoruz
+            if(div.innerHTML.includes('Analiza AI') || div.innerHTML.includes('Al Analiz')) {
+                container = div;
+                break;
+            }
+        }
+    }
 
-    const localCurr = state.baseCurrency; // Örn: PLN
-    const targetCurr = 'USD'; // Referans Dolar olsun
-    
-    // Eğer yerel para zaten USD ise EUR göster
-    const displayPair = localCurr === 'USD' ? 'EUR' : 'USD';
-    
-    // Kur hesapla: 1 USD kaç PLN?
-    const rate = state.rates[localCurr] / state.rates[displayPair];
-    
-    container.innerHTML = `
-        <div class="flex flex-col items-center justify-center h-full py-6">
-            <div class="text-sm text-gray-500 font-bold mb-2 uppercase tracking-widest">
-                1 ${displayPair} = 
+    if(container) {
+        // İçini tamamen boşalt (Bozuk grafik ve buton gitsin)
+        container.innerHTML = '';
+        
+        // Yeni tasarımı bas
+        const localCurr = state.baseCurrency; // PLN (Konumdan geldi)
+        const targetCurr = 'USD'; 
+        const displayPair = localCurr === 'USD' ? 'EUR' : 'USD';
+        const rate = state.rates[localCurr] / state.rates[displayPair];
+        
+        container.className = "bg-white dark:bg-cardDark rounded-[2rem] p-6 shadow-xl relative overflow-hidden flex flex-col justify-center items-center h-64 border border-slate-100 dark:border-white/5";
+        container.innerHTML = `
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            <div class="text-center z-10">
+                <p class="text-sm font-bold text-slate-400 tracking-widest mb-1">${I18N[state.lang].live_rate}</p>
+                <h2 class="text-6xl font-black text-slate-800 dark:text-white mb-2 tracking-tighter">
+                    ${rate.toFixed(2)} <span class="text-2xl font-bold text-indigo-500">${localCurr}</span>
+                </h2>
+                <p class="text-lg font-medium text-slate-500">1 ${displayPair} = ${rate.toFixed(4)} ${localCurr}</p>
             </div>
-            <div class="text-5xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-                 ${rate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}
-                 <span class="text-2xl text-indigo-500">${localCurr}</span>
+            <div class="absolute bottom-0 left-0 w-full opacity-10">
+                <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="#6366f1" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
             </div>
-            <div class="mt-4 flex gap-2">
-                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs font-bold animate-pulse">● LIVE</span>
-                <span class="px-3 py-1 bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 rounded-full text-xs font-bold">${state.lang.toUpperCase()}</span>
-            </div>
-        </div>
-    `;
+        `;
+    }
 }
 
-// --- DÜZELTME: ÇEVİRİCİ GİRİŞİ (Sıfırlayınca Boşluk Gelir) ---
+// --- DÜZELTME: ÇEVİRİCİ SIFIRLAMA (0'ı Yasakla) ---
 function fixConverterInput() {
     const input = document.getElementById('conv-amount');
     if (input) {
-        input.value = ''; // İçi tamamen boş
+        input.value = ''; // 0 yok, boşluk var
         input.placeholder = I18N[state.lang]?.enter_amount || "Enter Amount...";
         document.getElementById('conv-result').innerText = '---';
     }
 }
 
-// --- TEMİZLİK ---
+// --- DÜZELTME: DİL ETİKETLERİ (MİKTAR, HEDEF vs.) ---
+function updatePageLabels() {
+    // HTML'deki statik yazıları bulup değiştiriyoruz
+    // Bu, HTML yapısını bilmediğimiz için "tahmini" bulma yöntemidir
+    const elements = document.body.getElementsByTagName("*");
+    
+    const labelMap = {
+        'MİKTAR': 'amount', 'AMOUNT': 'amount', 'ILOŚĆ': 'amount', 'СУММА': 'amount', 'თანხა': 'amount',
+        'KAYNAK': 'source', 'SOURCE': 'source', 'ŹRÓDŁO': 'source', 'ИСТОЧНИК': 'source', 'წყარო': 'source',
+        'HEDEF': 'target', 'TARGET': 'target', 'CEL': 'target', 'ЦЕЛЬ': 'target', 'მიზანი': 'target',
+        'SONUÇ': 'result', 'RESULT': 'result', 'WYNIK': 'result', 'РЕЗУЛЬТАТ': 'result', 'შედეგი': 'result',
+        'SIFIRLA': 'reset', 'RESET': 'reset', 'RESETUJ': 'reset', 'СБРОС': 'reset', 'განულება': 'reset',
+        '0': '' // Tek başına 0 yazan yerleri (başlık altı) temizle
+    };
+
+    for (let el of elements) {
+        // Sadece kısa metin içeren etiketlere bak
+        if (el.children.length === 0 && el.innerText && labelMap[el.innerText]) {
+            const key = labelMap[el.innerText];
+            el.innerText = I18N[state.lang][key];
+        }
+        // Sıfırla butonu özel kontrolü
+        if(el.tagName === 'BUTTON' && (el.innerText === 'SIFIRLA' || el.innerText === 'RESET')) {
+             el.innerText = I18N[state.lang].reset;
+        }
+    }
+}
+
+// --- TEMİZLİK (Hayalet Buton Avcısı) ---
 function cleanUpUI() {
     const allButtons = document.querySelectorAll('button');
     allButtons.forEach(btn => {
-        if ((btn.innerText.includes('Analiza') || btn.innerText.includes('AI')) && !btn.onclick) {
+        // İçinde 'Analiz' geçen ve onclick özelliği olmayan butonları sil
+        if ((btn.innerText.includes('Analiz') || btn.innerText.includes('AI')) && !btn.getAttribute('onclick')) {
             btn.style.display = 'none';
-        }
-        if(btn.innerHTML.includes('bot') && !btn.hasAttribute('onclick')) {
-             btn.style.display = 'none';
         }
     });
     updateLangIcon();
@@ -160,50 +180,34 @@ function updateLangIcon() {
     if(langBtn) {
         langBtn.innerHTML = `<i data-lucide="globe" class="inline-block mr-1"></i> ${state.lang.toUpperCase()}`;
         langBtn.className = "flex items-center text-yellow-400 font-bold animate-pulse cursor-pointer";
-        langBtn.style.textShadow = "0 0 10px rgba(250, 204, 21, 0.6)";
         lucide.createIcons();
     }
 }
 
-// --- KONUMDAN PARA BİRİMİ BULMA ---
+// --- DİĞER STANDART FONKSİYONLAR ---
 async function detectLocationCurrency() {
-    if (localStorage.getItem('user_currency_set')) {
-        state.baseCurrency = localStorage.getItem('baseCurr');
-        return;
-    }
+    if (localStorage.getItem('user_currency_set')) { state.baseCurrency = localStorage.getItem('baseCurr'); return; }
     try {
-        const geoRes = await fetch('https://ipapi.co/json/');
-        const geoData = await geoRes.json();
-        const userCurrency = geoData.currency; 
-        if (userCurrency && (state.rates[userCurrency] || userCurrency === 'PLN' || userCurrency === 'TRY')) {
-            state.baseCurrency = userCurrency;
-            localStorage.setItem('baseCurr', userCurrency);
+        const geoRes = await fetch('https://ipapi.co/json/'); const geoData = await geoRes.json(); const userCurrency = geoData.currency; 
+        if (userCurrency && (state.rates[userCurrency] || userCurrency === 'PLN')) {
+            state.baseCurrency = userCurrency; localStorage.setItem('baseCurr', userCurrency);
             if (!state.favs.includes(userCurrency)) { state.favs.push(userCurrency); localStorage.setItem('favs_v9', JSON.stringify(state.favs)); }
             localStorage.setItem('user_currency_set', 'true');
         }
     } catch (err) { console.log("Konum alınamadı."); }
 }
 
-// --- API BAĞLANTISI ---
 async function fetchData() { 
     try { 
         const res = await fetch('/api/forex'); const data = await res.json(); 
         if(data.results) state.rates = data.results; else state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0};
-        try {
-            const goldRes = await fetch('/api/gold'); const goldData = await goldRes.json();
-            if(goldData.XAU) { state.rates['XAU'] = 1 / goldData.XAU; state.rates['XAG'] = 1 / goldData.XAG; }
-        } catch (e) { state.rates['XAU'] = 1/2650; state.rates['XAG'] = 1/31; }
-    } catch(e) { state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2650, 'XAG': 1/31}; } 
+        try { const goldRes = await fetch('/api/gold'); const goldData = await goldRes.json(); if(goldData.XAU) { state.rates['XAU'] = 1 / goldData.XAU; state.rates['XAG'] = 1 / goldData.XAG; } } catch (e) { state.rates['XAU'] = 1/2650; state.rates['XAG'] = 1/31; }
+    } catch(e) { state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0}; } 
 }
 
-// --- GRAFİK AÇMA ---
 function openChartModal(symbol) {
-    let modal = document.getElementById('tv-modal');
-    if(modal) modal.remove();
-
-    modal = document.createElement('div');
-    modal.id = 'tv-modal';
-    modal.className = 'fixed inset-0 z-[50] bg-black flex flex-col';
+    let modal = document.getElementById('tv-modal'); if(modal) modal.remove();
+    modal = document.createElement('div'); modal.id = 'tv-modal'; modal.className = 'fixed inset-0 z-[50] bg-black flex flex-col';
     modal.innerHTML = `
         <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#131722] relative z-[60]">
             <h3 id="tv-title" class="text-white font-bold text-lg">${symbol} / USD</h3>
@@ -214,365 +218,57 @@ function openChartModal(symbol) {
              <button onclick="openProAIChat('${symbol}')" class="w-full max-w-sm bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-lg transition transform active:scale-95 cursor-pointer">
                 <i data-lucide="sparkles"></i> Grafer Pro Ai
              </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    lucide.createIcons();
-
-    let tvSymbol = "FX:EURUSD"; 
-    if(symbol === 'USD') tvSymbol = "FX:EURUSD"; 
-    else if(symbol === 'EUR') tvSymbol = "FX:EURUSD";
-    else if(symbol === 'TRY') tvSymbol = "FX:USDTRY";
-    else if(symbol === 'GBP') tvSymbol = "FX:GBPUSD"; 
-    else if(symbol === 'XAU') tvSymbol = "OANDA:XAUUSD"; 
-    else if(symbol === 'BTC') tvSymbol = "BINANCE:BTCUSDT";
-    else tvSymbol = `FX:USD${symbol}`;
-
-    if(window.TradingView) {
-        new TradingView.widget({
-            "autosize": true, "symbol": tvSymbol, "interval": "D", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "en", "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_side_toolbar": false, "allow_symbol_change": true, "container_id": "tv-chart-container"
-        });
-    }
+        </div>`;
+    document.body.appendChild(modal); lucide.createIcons();
+    let tvSymbol = symbol === 'USD' ? "FX:EURUSD" : (symbol === 'XAU' ? "OANDA:XAUUSD" : (symbol === 'BTC' ? "BINANCE:BTCUSDT" : `FX:USD${symbol}`));
+    if(window.TradingView) new TradingView.widget({ "autosize": true, "symbol": tvSymbol, "interval": "D", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "en", "toolbar_bg": "#f1f3f6", "enable_publishing": false, "container_id": "tv-chart-container" });
 }
 
-// --- GRAFER PRO AI CHAT ---
 function openProAIChat(symbol) {
-    const price = getPrice(symbol).toFixed(4);
-    let chatModal = document.getElementById('pro-chat-modal');
-    if(chatModal) chatModal.remove();
-
-    chatModal = document.createElement('div');
-    chatModal.id = 'pro-chat-modal';
-    chatModal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
+    const price = getPrice(symbol).toFixed(4); let chatModal = document.getElementById('pro-chat-modal'); if(chatModal) chatModal.remove();
+    chatModal = document.createElement('div'); chatModal.id = 'pro-chat-modal'; chatModal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4';
     chatModal.innerHTML = `
         <div class="bg-white dark:bg-[#1e222d] w-full max-w-md h-[550px] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden relative animate-fade-in-up">
             <div class="bg-indigo-600 p-4 flex justify-between items-center text-white shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                        <i data-lucide="bot" size="24"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-base">Grafer Pro Ai</h3>
-                        <p class="text-[10px] opacity-80 uppercase tracking-wide">Online • Global</p>
-                    </div>
-                </div>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><i data-lucide="bot" size="24"></i></div><div><h3 class="font-bold text-base">Grafer Pro Ai</h3><p class="text-[10px] opacity-80 uppercase tracking-wide">Online • Global</p></div></div>
                 <button onclick="document.getElementById('pro-chat-modal').remove()" class="hover:text-gray-200 cursor-pointer p-2"><i data-lucide="x" size="24"></i></button>
             </div>
             <div id="pro-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50 dark:bg-black/20 text-sm"></div>
-            <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e222d] flex gap-2 shrink-0">
-                <input type="text" id="pro-chat-input" placeholder="..." class="flex-1 bg-slate-100 dark:bg-black/10 border-none rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none" onkeypress="handleProEnter(event)">
-                <button onclick="sendProMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition cursor-pointer"><i data-lucide="send" size="20"></i></button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(chatModal);
-    lucide.createIcons();
-    
-    addProMessage(`Grafer Pro AI: Ready! Analyzing ${symbol}...`, 'bot', true);
-    const prompt = `${symbol} (Price: ${price}) technical analysis.`;
-    askOpenAI(prompt, true);
+            <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1e222d] flex gap-2 shrink-0"><input type="text" id="pro-chat-input" placeholder="..." class="flex-1 bg-slate-100 dark:bg-black/10 border-none rounded-xl px-4 py-3 text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none" onkeypress="handleProEnter(event)"><button onclick="sendProMessage()" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition cursor-pointer"><i data-lucide="send" size="20"></i></button></div>
+        </div>`;
+    document.body.appendChild(chatModal); lucide.createIcons();
+    addProMessage(`Grafer Pro AI: Ready! Analyzing ${symbol}...`, 'bot', true); askOpenAI(`${symbol} (Price: ${price}) technical analysis.`, true);
 }
-
 function handleProEnter(e) { if(e.key === 'Enter') sendProMessage(); }
-
-function sendProMessage() {
-    const input = document.getElementById('pro-chat-input');
-    const msg = input.value.trim();
-    if(!msg) return;
-    addProMessage(msg, 'user');
-    input.value = '';
-    askOpenAI(msg, false);
-}
-
+function sendProMessage() { const input = document.getElementById('pro-chat-input'); const msg = input.value.trim(); if(!msg) return; addProMessage(msg, 'user'); input.value = ''; askOpenAI(msg, false); }
 async function askOpenAI(message, isInitial) {
-    const container = document.getElementById('pro-chat-messages');
-    let loadingId = null;
-    if(!isInitial) loadingId = addProMessage("...", 'bot', true);
-
-    try {
-        const res = await fetch('/api/ai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
-        });
-        const data = await res.json();
-        
-        if(loadingId) document.getElementById(loadingId).remove();
-        if(isInitial) container.innerHTML = ''; 
-
-        if(data.reply) addProMessage(data.reply, 'bot');
-        else addProMessage("Error.", 'bot');
-
-    } catch (e) {
-        if(loadingId) document.getElementById(loadingId).remove();
-        addProMessage("Connection Error.", 'bot');
-    }
+    const container = document.getElementById('pro-chat-messages'); let loadingId = null; if(!isInitial) loadingId = addProMessage("...", 'bot', true);
+    try { const res = await fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message }) }); const data = await res.json(); if(loadingId) document.getElementById(loadingId).remove(); if(isInitial) container.innerHTML = ''; if(data.reply) addProMessage(data.reply, 'bot'); else addProMessage("Error.", 'bot'); } catch (e) { if(loadingId) document.getElementById(loadingId).remove(); addProMessage("Connection Error.", 'bot'); }
 }
-
-function addProMessage(text, sender, isLoading = false) {
-    const container = document.getElementById('pro-chat-messages');
-    const div = document.createElement('div');
-    div.className = sender === 'user' 
-        ? 'ml-auto bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm' 
-        : `bg-white dark:bg-cardDark text-slate-800 dark:text-white p-3.5 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm border border-gray-100 dark:border-gray-700 ${isLoading ? 'animate-pulse text-indigo-500' : ''}`;
-    div.innerText = text;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight; 
-    return div.id = 'msg-' + Math.random();
-}
+function addProMessage(text, sender, isLoading = false) { const container = document.getElementById('pro-chat-messages'); const div = document.createElement('div'); div.className = sender === 'user' ? 'ml-auto bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm' : `bg-white dark:bg-cardDark text-slate-800 dark:text-white p-3.5 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm border border-gray-100 dark:border-gray-700 ${isLoading ? 'animate-pulse text-indigo-500' : ''}`; div.innerText = text; container.appendChild(div); container.scrollTop = container.scrollHeight; return div.id = 'msg-' + Math.random(); }
 
 function toggleLangMenu() { document.getElementById('lang-dropdown').classList.toggle('hidden'); document.getElementById('lang-dropdown').classList.toggle('flex'); }
-
 function setLanguage(lang) {
     state.lang = lang; localStorage.setItem('lang', lang);
-    
-    // Bütün metinleri güncelle
-    document.querySelectorAll('[data-i18n]').forEach(el => { 
-        const key = el.getAttribute('data-i18n'); 
-        if(I18N[lang][key]) {
-            // Eğer element bir input ise placeholder'ı, değilse metni güncelle
-            if(el.tagName === 'INPUT') el.placeholder = I18N[lang][key];
-            else el.innerText = I18N[lang][key];
-        }
-    });
-    
+    document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if(I18N[lang][key]) el.innerText = I18N[lang][key]; });
     document.getElementById('lang-dropdown').classList.add('hidden'); document.getElementById('lang-dropdown').classList.remove('flex');
-    
-    // Çevirici input placeholder'ı güncelle (Manuel)
-    const input = document.getElementById('conv-amount');
-    if (input) input.placeholder = I18N[lang]?.enter_amount || "Enter Amount...";
-    
-    // Haberleri ve İkonu güncelle
-    startNewsTicker();
-    updateLangIcon(); 
-    
-    // ANA EKRANDAKİ BÜYÜK KARTI DİL İÇİN GÜNCELLE
-    renderFeaturedCard();
+    fixConverterInput(); 
+    startNewsTicker(); 
+    updateLangIcon();
+    renderFeaturedCard(); // Kartı güncelle
+    updatePageLabels(); // Diğer etiketleri zorla güncelle
 }
-
-function startNewsTicker() {
-    const container = document.getElementById('news-ticker');
-    const msgs = NEWS_DATA[state.lang] || NEWS_DATA['en'];
-    container.innerHTML = msgs.map(m => {
-        const query = encodeURIComponent(m);
-        return `<a href="https://www.google.com/search?q=${query}&tbm=nws" target="_blank" class="ticker-item cursor-pointer hover:text-indigo-400 transition" style="text-decoration:none;">
-            <span style="color:var(--theme-color)">●</span> ${m}
-        </a>`;
-    }).join('');
-}
-
-function getSymbol(curr) {
-    const symbols = {'PLN':'zł', 'USD':'$', 'EUR':'€', 'TRY':'₺', 'GBP':'£', 'GEL':'₾'};
-    return symbols[curr] || curr;
-}
-
-function setTheme(color) {
-    state.theme = color; localStorage.setItem('theme', color); document.documentElement.style.setProperty('--theme-color', color);
-    document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
-    if(color==='#4f46e5') document.querySelectorAll('.theme-dot')[0].classList.add('active');
-    else if(color==='#8b5cf6') document.querySelectorAll('.theme-dot')[1].classList.add('active');
-    else if(color==='#10b981') document.querySelectorAll('.theme-dot')[2].classList.add('active');
-    else if(color==='#f97316') document.querySelectorAll('.theme-dot')[3].classList.add('active');
-    else if(color==='#ef4444') document.querySelectorAll('.theme-dot')[4].classList.add('active');
-    initChart('mainChart', state.theme);
-}
-
-function updateUI() { 
-    updateBaseCurrencyUI(); 
-    updateConverterUI(); 
-    renderGrid(); 
-    renderCryptoGrid(); 
-    renderPortfolio(); 
-    renderFeaturedCard(); // BÜYÜK KART GÜNCELLE
-}
+function startNewsTicker() { const container = document.getElementById('news-ticker'); const msgs = NEWS_DATA[state.lang] || NEWS_DATA['en']; container.innerHTML = msgs.map(m => { const query = encodeURIComponent(m); return `<a href="https://www.google.com/search?q=${query}&tbm=nws" target="_blank" class="ticker-item cursor-pointer hover:text-indigo-400 transition" style="text-decoration:none;"><span style="color:var(--theme-color)">●</span> ${m}</a>`; }).join(''); }
+function getSymbol(curr) { const symbols = {'PLN':'zł', 'USD':'$', 'EUR':'€', 'TRY':'₺', 'GBP':'£', 'GEL':'₾'}; return symbols[curr] || curr; }
+function setTheme(color) { state.theme = color; localStorage.setItem('theme', color); document.documentElement.style.setProperty('--theme-color', color); document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active')); initChart('mainChart', state.theme); }
+function updateUI() { updateBaseCurrencyUI(); updateConverterUI(); renderGrid(); renderCryptoGrid(); renderPortfolio(); updatePageLabels(); }
 function getFlagUrl(code) { return FLAG_MAP[code] ? `https://flagcdn.com/w80/${FLAG_MAP[code]}.png` : null; }
-
-function getPrice(code) { 
-    let rateCode = state.rates[code]; 
-    if(!rateCode) { 
-        if(code==='BTC') rateCode = 1/65000; 
-        else if(code==='ETH') rateCode = 1/3500; 
-        else if(code==='SOL') rateCode = 1/140; 
-        else if(code==='XRP') rateCode = 1/0.60; 
-        else rateCode = 1; 
-    } 
-    return (1 / rateCode) * state.rates[state.baseCurrency]; 
-}
-
-function toggleVSMode() { if(state.vsPair) { state.vsPair = null; document.getElementById('vs-btn').classList.remove('bg-indigo-600', 'text-white'); } else { state.vsPair = 'BTC'; document.getElementById('vs-btn').classList.add('bg-indigo-600', 'text-white'); } initChart('mainChart', state.theme); startLiveSimulations(); }
-function swapChart() { state.isChartSwapped = !state.isChartSwapped; startLiveSimulations(); }
-
-function initChart(id, color) {
-    const canvas = document.getElementById(id);
-    if(!canvas) return;
-    if(charts[id]) charts[id].destroy(); 
-    const ctx = canvas.getContext('2d');
-    let datasets = [{ label: id==='mainChart'?state.chartPair:state.cryptoChartPair, data: Array(20).fill(null), borderColor: color, borderWidth: 3, backgroundColor: createGradient(ctx, color), fill: true, tension: 0.4, pointRadius: 0 }];
-    if(id==='mainChart' && state.vsPair) { datasets.push({ label: state.vsPair, data: Array(20).fill(null), borderColor: '#facc15', borderWidth: 3, borderDash: [5,5], fill: false, tension: 0.4, pointRadius: 0 }); }
-    charts[id] = new Chart(ctx, { type: 'line', data: { labels: Array(20).fill(''), datasets: datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } }, animation: { duration: 0 } } });
-}
-function createGradient(ctx, color) { const g = ctx.createLinearGradient(0, 0, 0, 300); g.addColorStop(0, color + '55'); g.addColorStop(1, color + '00'); return g; }
-
-function startLiveSimulations() {
-    if(intervals['main']) clearInterval(intervals['main']);
-    if(intervals['crypto']) clearInterval(intervals['crypto']);
-
-    const mainChart = charts['mainChart'];
-    if(mainChart) {
-        let val1 = getPrice(state.chartPair); 
-        if(state.isChartSwapped) val1 = 1/val1;
-        const valVS = state.vsPair ? getPrice(state.vsPair) : 0;
-        intervals['main'] = setInterval(() => {
-            const arr1 = mainChart.data.datasets[0].data; const next1 = arr1[arr1.length-1] * (1 + (Math.random()-0.5)*0.005); arr1.shift(); arr1.push(next1);
-            if(state.vsPair) { const arr2 = mainChart.data.datasets[1].data; const next2 = arr2[arr2.length-1] * (1 + (Math.random()-0.5)*0.01); arr2.shift(); arr2.push(next2); }
-            mainChart.update();
-            const sym = state.isChartSwapped ? state.chartPair : getSymbol(state.baseCurrency);
-            document.getElementById('chart-price').innerText = `${sym} ${next1.toLocaleString(undefined, {maximumFractionDigits:4})}`;
-            if(state.isChartSwapped) { document.getElementById('chart-symbol').innerHTML = `<span class="base-curr-text">${state.baseCurrency}</span>/${state.chartPair}`; } 
-            else { document.getElementById('chart-symbol').innerHTML = `${state.chartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`; }
-        }, 1000);
-    }
-    
-    const cChart = charts['cryptoChart'];
-    if(cChart) {
-        const cVal = getPrice(state.cryptoChartPair);
-        cChart.data.datasets[0].data = Array(20).fill(cVal).map(v => v * (1+(Math.random()-0.5)*0.01));
-        intervals['crypto'] = setInterval(() => {
-            const arr = cChart.data.datasets[0].data; const next = arr[arr.length-1] * (1 + (Math.random()-0.5)*0.01);
-            arr.shift(); arr.push(next); cChart.update();
-            const sym = getSymbol(state.baseCurrency);
-            document.getElementById('crypto-chart-price').innerText = `${sym} ${next.toLocaleString(undefined, {maximumFractionDigits:2})}`;
-        }, 1000);
-    }
-
-    const flag = getFlagUrl(state.chartPair); const chartFlag = document.getElementById('chart-flag');
-    if(flag) { chartFlag.src = flag; chartFlag.style.display='block'; } else { chartFlag.style.display='none'; }
-    document.getElementById('crypto-chart-symbol').innerHTML = `${state.cryptoChartPair}/<span class="base-curr-text">${state.baseCurrency}</span>`;
-    document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
-}
-
-function openSelector(mode) {
-    state.drawerMode = mode; document.getElementById('selector-drawer').classList.remove('hidden'); setTimeout(() => document.getElementById('drawer-panel').classList.remove('translate-y-full'), 10);
-    const list = document.getElementById('drawer-list'); let items = []; let activeList = []; 
-    if(mode === 'grid') { items = [...Object.keys(FLAG_MAP), 'XAU', 'XAG']; activeList = state.favs; }
-    else if (mode === 'settings') { items = Object.keys(state.rates).sort(); activeList = [state.baseCurrency]; }
-    else if (mode === 'chart-fiat') { items = [...Object.keys(FLAG_MAP), 'XAU', 'XAG']; activeList = [state.chartPair]; }
-    else if (mode === 'crypto' || mode === 'chart-crypto') { items = Object.keys(CRYPTO_ICONS); activeList = mode==='chart-crypto' ? [state.cryptoChartPair] : state.cryptoFavs; }
-    else if (mode === 'add-asset') { items = [...Object.keys(CRYPTO_ICONS), ...Object.keys(FLAG_MAP), 'XAU', 'XAG']; activeList = []; }
-    else if (mode === 'from' || mode === 'to') { items = Object.keys(state.rates).sort(); activeList = [state.convFrom, state.convTo]; }
-    renderDrawerList(items, activeList, mode === 'settings' || mode.includes('chart') || mode === 'add-asset' || mode === 'from' || mode === 'to'); 
-}
-
-function renderDrawerList(items, activeList, isSingleSelect) {
-    document.getElementById('drawer-list').innerHTML = items.map(c => {
-        const isSel = activeList.includes(c); 
-        let img = ''; let name = CURRENCY_NAMES[c] || c;
-        if(CRYPTO_ICONS[c]) img = `<img src="https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[c]}@2x.png" class="w-8 h-8 rounded-full object-cover bg-white">`;
-        else if (c === 'XAU') img = `<div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-white"><i data-lucide="coins" size="14"></i></div>`;
-        else if (c === 'XAG') img = `<div class="w-8 h-8 rounded-full bg-slate-400 flex items-center justify-center text-white"><i data-lucide="disc" size="14"></i></div>`;
-        else { const flagUrl = getFlagUrl(c); img = flagUrl ? `<img src="${flagUrl}" class="w-8 h-8 rounded-full shadow-sm border border-slate-100 object-cover">` : `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i data-lucide="globe" size="16" class="text-slate-400"></i></div>`; }
-        let icon = ''; 
-        if (isSingleSelect && state.drawerMode !== 'add-asset') { icon = isSel ? `<i data-lucide="circle-dot" class="text-[${state.theme}]"></i>` : '<i data-lucide="circle" class="text-slate-300"></i>'; }
-        else if (isSel) { icon = `<i data-lucide="check-circle" class="text-[${state.theme}] fill-indigo-100"></i>`; }
-        return `<button onclick="handleSelection('${c}')" class="w-full flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-white/5 rounded-xl border-b border-gray-50 dark:border-white/5">${isSingleSelect && state.drawerMode!=='add-asset' ? icon : ''} ${img}<div class="flex-1 text-left"> <span class="font-bold text-lg text-slate-800 dark:text-white block">${c}</span> <span class="text-xs text-slate-400 font-medium">${name}</span> </div>${!isSingleSelect ? icon : ''}</button>`;
-    }).join(''); lucide.createIcons();
-}
-
-function handleSelection(code) {
-    const mode = state.drawerMode;
-    if(mode === 'settings') { state.baseCurrency = code; localStorage.setItem('baseCurr', code); updateUI(); startLiveSimulations(); closeAllDrawers(); }
-    else if(mode === 'chart-fiat') { state.chartPair = code; startLiveSimulations(); closeAllDrawers(); }
-    else if(mode === 'chart-crypto') { state.cryptoChartPair = code; startLiveSimulations(); closeAllDrawers(); }
-    else if(mode === 'from') { state.convFrom = code; updateConverterUI(); convert(); closeAllDrawers(); }
-    else if(mode === 'to') { state.convTo = code; updateConverterUI(); convert(); closeAllDrawers(); }
-    else if(mode === 'add-asset') { state.tempAsset = code; closeAllDrawers(); document.getElementById('qty-title').innerText = `${code} Miktarı`; document.getElementById('quantity-modal').classList.remove('hidden'); document.getElementById('asset-amount').focus(); }
-    else {
-        const listName = mode === 'grid' ? 'favs' : 'cryptoFavs'; const storageName = mode === 'grid' ? 'favs_v9' : 'crypto_v8';
-        if(state[listName].includes(code)) state[listName] = state[listName].filter(x => x !== code); else state[listName].push(code);
-        localStorage.setItem(storageName, JSON.stringify(state[listName])); updateUI(); openSelector(mode);
-    }
-}
-
-function closeAllDrawers() { document.getElementById('drawer-panel').classList.add('translate-y-full'); setTimeout(() => document.getElementById('selector-drawer').classList.add('hidden'), 300); }
-function filterDrawer() { const query = document.getElementById('search-input').value.toLowerCase(); const btns = document.getElementById('drawer-list').getElementsByTagName('button'); for(let btn of btns) { btn.style.display = btn.innerText.toLowerCase().includes(query) ? 'flex' : 'none'; } }
-
-function openAddAssetSelector() { state.tempAsset = null; openSelector('add-asset'); }
-
-function confirmAddAsset() { 
-    const amtInput = document.getElementById('asset-amount');
-    const amt = parseFloat(amtInput.value); 
-    if(state.tempAsset && amt > 0) { 
-        const existing = state.portfolio.find(p => p.symbol === state.tempAsset);
-        if(existing) { existing.amount += amt; } else { state.portfolio.push({symbol: state.tempAsset, amount: amt}); }
-        localStorage.setItem('portfolio', JSON.stringify(state.portfolio)); document.getElementById('quantity-modal').classList.add('hidden'); renderPortfolio(); amtInput.value = ''; 
-    } else { alert("Lütfen geçerli bir miktar girin."); }
-}
-
-function renderPortfolio() {
-    const list = document.getElementById('portfolio-list'); const totalEl = document.getElementById('portfolio-total'); let totalVal = 0;
-    const sym = getSymbol(state.baseCurrency);
-    if(state.portfolio.length === 0) { list.innerHTML = `<div class="text-center p-10 text-slate-400"><i data-lucide="wallet" size="48" class="mx-auto mb-3 opacity-20"></i><p class="text-sm opacity-50">Empty / Boş</p></div>`; totalEl.innerText = "0.00"; } 
-    else {
-        list.innerHTML = state.portfolio.map((item, index) => { const price = getPrice(item.symbol); const val = price * item.amount; totalVal += val; return `<div class="bg-white dark:bg-cardDark p-4 rounded-xl flex justify-between items-center shadow-sm border border-slate-100 dark:border-white/5"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 text-xs">${item.symbol}</div><div><p class="font-bold text-slate-800 dark:text-white">${item.symbol}</p><p class="text-xs text-slate-400">${item.amount}</p></div></div><div class="text-right"><p class="font-bold text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:2})}</p><button onclick="state.portfolio.splice(${index}, 1); localStorage.setItem('portfolio', JSON.stringify(state.portfolio)); renderPortfolio();" class="text-red-400 text-xs mt-1">X</button></div></div>`; }).join('');
-        totalEl.innerText = totalVal.toLocaleString(undefined, {maximumFractionDigits:2});
-    } lucide.createIcons();
-}
-function clearPortfolio() { state.portfolio = []; localStorage.setItem('portfolio', JSON.stringify(state.portfolio)); renderPortfolio(); }
-
-function updateBaseCurrencyUI() { 
-    document.querySelectorAll('.base-curr-text').forEach(el => el.innerText = state.baseCurrency); 
-    document.querySelectorAll('.base-curr-symbol').forEach(el => el.innerText = getSymbol(state.baseCurrency)); 
-    document.getElementById('settings-code').innerText = state.baseCurrency; 
-    const flagUrl = getFlagUrl(state.baseCurrency); const imgEl = document.getElementById('settings-flag'); const iconEl = document.getElementById('settings-globe-icon'); if (flagUrl) { imgEl.src = flagUrl; imgEl.style.display = 'block'; iconEl.classList.add('hidden'); } else { imgEl.style.display = 'none'; iconEl.classList.remove('hidden'); lucide.createIcons(); } 
-}
-function updateConverterUI() { 
-    document.getElementById('code-from').innerText = state.convFrom; document.getElementById('code-to').innerText = state.convTo; 
-    const f1 = document.getElementById('flag-from'); const f2 = document.getElementById('flag-to'); const u1 = getFlagUrl(state.convFrom); const u2 = getFlagUrl(state.convTo); 
-    if(u1) { f1.src = u1; f1.style.display='block'; } else f1.style.display='none'; 
-    if(u2) { f2.src = u2; f2.style.display='block'; } else f2.style.display='none'; 
-    
-    // Etiketleri Güncelle (MİKTAR, KAYNAK, HEDEF, SONUÇ)
-    const labels = document.querySelectorAll('.conv-label');
-    if(labels.length >= 4) {
-        labels[0].innerText = I18N[state.lang].amount;
-        labels[1].innerText = I18N[state.lang].source;
-        labels[2].innerText = I18N[state.lang].target;
-        labels[3].innerText = I18N[state.lang].result;
-    }
-}
-
-function convert() { 
-    const inputVal = document.getElementById('conv-amount').value;
-    if(!inputVal) { document.getElementById('conv-result').innerText = '---'; return; }
-    const amt = parseFloat(inputVal);
-    const rate = state.rates[state.convTo] / state.rates[state.convFrom]; 
-    const res = amt * rate; 
-    document.getElementById('conv-result').innerText = `${res.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})} ${state.convTo}`; 
-}
+function getPrice(code) { let rateCode = state.rates[code]; if(!rateCode) { if(code==='BTC') rateCode=1/65000; else rateCode=1; } return (1/rateCode)*state.rates[state.baseCurrency]; }
+function convert() { const inputVal = document.getElementById('conv-amount').value; if(!inputVal) { document.getElementById('conv-result').innerText = '---'; return; } const amt = parseFloat(inputVal); const rate = state.rates[state.convTo] / state.rates[state.convFrom]; const res = amt * rate; document.getElementById('conv-result').innerText = `${res.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})} ${state.convTo}`; }
+function updateConverterUI() { document.getElementById('code-from').innerText = state.convFrom; document.getElementById('code-to').innerText = state.convTo; const f1 = document.getElementById('flag-from'); const f2 = document.getElementById('flag-to'); const u1 = getFlagUrl(state.convFrom); const u2 = getFlagUrl(state.convTo); if(u1) { f1.src = u1; f1.style.display='block'; } else f1.style.display='none'; if(u2) { f2.src = u2; f2.style.display='block'; } else f2.style.display='none'; }
 function swapCurrencies() { [state.convFrom, state.convTo] = [state.convTo, state.convFrom]; updateConverterUI(); convert(); }
-
-function renderGrid() { 
-    const container = document.getElementById('dashboard-grid'); 
-    const sym = getSymbol(state.baseCurrency); 
-    if(state.rates['XAU'] && !state.favs.includes('XAU')) { state.favs.push('XAU'); }
-    container.innerHTML = state.favs.map(curr => { 
-        const val = getPrice(curr); 
-        const flagUrl = getFlagUrl(curr);
-        let imgTag = flagUrl ? `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">` : `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`;
-        if (curr === 'XAU') imgTag = `<div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 border border-yellow-200"><i data-lucide="coins" size="16"></i></div>`;
-        else if (curr === 'XAG') imgTag = `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200"><i data-lucide="disc" size="16"></i></div>`;
-        return `<div onclick="openChartModal('${curr}')" class="relative cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition group"><div class="absolute top-3 right-3 text-indigo-500 dark:text-indigo-400"><i data-lucide="maximize-2" size="16"></i></div><div class="flex justify-between items-start">${imgTag}<span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">+0.4%</span></div><div><p class="font-bold text-slate-500 text-xs">${curr}/${state.baseCurrency}</p><p class="font-bold text-xl text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:3})}</p></div></div>`; 
-    }).join(''); 
-    lucide.createIcons();
-}
-
-function renderCryptoGrid() { 
-    const container = document.getElementById('crypto-grid'); const sym = getSymbol(state.baseCurrency); 
-    container.innerHTML = state.cryptoFavs.map(c => { 
-        const val = getPrice(c); const icon = CRYPTO_ICONS[c] || 'btc'; 
-        return `<div onclick="openChartModal('${c}')" class="cursor-pointer bg-white dark:bg-cardDark p-5 rounded-[1.5rem] neon-box card-pop flex items-center justify-between gap-2 shadow-sm active:scale-95 transition"><div class="flex items-center gap-3 flex-1 min-w-0"><img src="https://assets.coincap.io/assets/icons/${icon}@2x.png" class="w-10 h-10 rounded-full shadow-lg flex-shrink-0 bg-white object-cover" onerror="this.src='https://assets.coincap.io/assets/icons/btc@2x.png'"><div class="min-w-0"><span class="font-bold text-lg text-slate-800 dark:text-white block truncate">${c}</span><span class="text-xs text-slate-400 block truncate">Coin</span></div></div><div class="text-right flex-shrink-0"><p class="font-bold text-base text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:2})}</p><p class="text-[10px] text-green-500 font-medium">+1.2%</p></div></div>`; 
-    }).join(''); 
-}
-
+function updateBaseCurrencyUI() { document.querySelectorAll('.base-curr-text').forEach(el => el.innerText = state.baseCurrency); document.querySelectorAll('.base-curr-symbol').forEach(el => el.innerText = getSymbol(state.baseCurrency)); document.getElementById('settings-code').innerText = state.baseCurrency; const flagUrl = getFlagUrl(state.baseCurrency); const imgEl = document.getElementById('settings-flag'); if (flagUrl) { imgEl.src = flagUrl; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; } }
+function renderGrid() { const container = document.getElementById('dashboard-grid'); const sym = getSymbol(state.baseCurrency); if(state.rates['XAU'] && !state.favs.includes('XAU')) { state.favs.push('XAU'); } container.innerHTML = state.favs.map(curr => { const val = getPrice(curr); const flagUrl = getFlagUrl(curr); let imgTag = flagUrl ? `<img src="${flagUrl}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-600 shadow-md">` : `<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-[10px] border border-slate-200">${curr.substring(0,2)}</div>`; if (curr === 'XAU') imgTag = `<div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 border border-yellow-200"><i data-lucide="coins" size="16"></i></div>`; return `<div onclick="openChartModal('${curr}')" class="relative cursor-pointer bg-white dark:bg-cardDark p-4 rounded-2xl neon-box card-pop flex flex-col gap-2 shadow-sm active:scale-95 transition group"><div class="absolute top-3 right-3 text-indigo-500 dark:text-indigo-400"><i data-lucide="maximize-2" size="16"></i></div><div class="flex justify-between items-start">${imgTag}<span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold">+0.4%</span></div><div><p class="font-bold text-slate-500 text-xs">${curr}/${state.baseCurrency}</p><p class="font-bold text-xl text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:3})}</p></div></div>`; }).join(''); lucide.createIcons(); }
+function renderCryptoGrid() { const container = document.getElementById('crypto-grid'); const sym = getSymbol(state.baseCurrency); container.innerHTML = state.cryptoFavs.map(c => { const val = getPrice(c); const icon = CRYPTO_ICONS[c] || 'btc'; return `<div onclick="openChartModal('${c}')" class="cursor-pointer bg-white dark:bg-cardDark p-5 rounded-[1.5rem] neon-box card-pop flex items-center justify-between gap-2 shadow-sm active:scale-95 transition"><div class="flex items-center gap-3 flex-1 min-w-0"><img src="https://assets.coincap.io/assets/icons/${icon}@2x.png" class="w-10 h-10 rounded-full shadow-lg flex-shrink-0 bg-white object-cover" onerror="this.src='https://assets.coincap.io/assets/icons/btc@2x.png'"><div class="min-w-0"><span class="font-bold text-lg text-slate-800 dark:text-white block truncate">${c}</span><span class="text-xs text-slate-400 block truncate">Coin</span></div></div><div class="text-right flex-shrink-0"><p class="font-bold text-base text-slate-800 dark:text-white">${sym} ${val.toLocaleString(undefined, {maximumFractionDigits:2})}</p><p class="text-[10px] text-green-500 font-medium">+1.2%</p></div></div>`; }).join(''); }
 function nav(page) { document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById('page-' + page).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('text-[var(--theme-color)]', 'active'); b.classList.add('text-slate-400'); b.style.color = ''; }); const btn = document.getElementById('nav-' + page); if(btn) { btn.classList.add('text-[var(--theme-color)]', 'active'); btn.classList.remove('text-slate-400'); btn.style.color = state.theme; } if(document.getElementById('sidebar').style.transform === 'translateX(0px)') toggleSidebar(); }
 function toggleSidebar() { const sb = document.getElementById('sidebar'); const isOpen = sb.style.transform === 'translateX(0px)'; sb.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0px)'; document.getElementById('overlay').classList.toggle('hidden', isOpen); }
