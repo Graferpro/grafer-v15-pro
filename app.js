@@ -1,5 +1,5 @@
-// --- VERSİYON (GLOBAL SÜRÜM) ---
-const APP_VERSION = '2.1'; 
+// --- VERSİYON (GÜNCEL SÜRÜM - GOLD FIX) ---
+const APP_VERSION = '2.2'; 
 
 // --- SABİT VERİLER ---
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
@@ -33,7 +33,7 @@ let state = {
 let charts = {}; let intervals = {};
 
 window.onload = async () => {
-    // 0. Cache Temizliği
+    // 0. Cache Temizliği (Versiyon Kontrolü)
     if (localStorage.getItem('app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('app_version', APP_VERSION);
@@ -51,9 +51,8 @@ window.onload = async () => {
     }
     setLanguage(state.lang);
     
-    // DİL İKONUNU BELİRGİN YAP (Glow Efekti)
+    // DİL İKONUNU BELİRGİN YAP
     const langBtn = document.getElementById('lang-dropdown')?.previousElementSibling; 
-    // Eğer bir buton varsa (dropdown'dan önceki), ona stil ver
     if(langBtn) {
         langBtn.classList.add('text-indigo-500', 'font-bold', 'animate-pulse');
         langBtn.style.border = "1px solid rgba(99, 102, 241, 0.5)";
@@ -69,7 +68,7 @@ window.onload = async () => {
     // 3. VERİLERİ ÇEK
     await fetchData(); 
     
-    // 4. KONUMA GÖRE PARA BİRİMİ (Dilden Bağımsız)
+    // 4. KONUMA GÖRE PARA BİRİMİ
     await detectLocationCurrency(); 
 
     // Neon
@@ -103,7 +102,6 @@ async function detectLocationCurrency() {
             state.baseCurrency = userCurrency;
             localStorage.setItem('baseCurr', userCurrency);
             
-            // Listeye ekle
             if (!state.favs.includes(userCurrency)) {
                 state.favs.push(userCurrency);
                 localStorage.setItem('favs_v9', JSON.stringify(state.favs));
@@ -113,19 +111,71 @@ async function detectLocationCurrency() {
     } catch (err) { console.log("Konum alınamadı, default devam."); }
 }
 
-// --- API BAĞLANTISI ---
+// --- API BAĞLANTISI (GÜNCELLENDİ: ALTIN FIX) ---
 async function fetchData() { 
     try { 
-        const res = await fetch('/api/forex'); const data = await res.json(); 
-        if(data.results) state.rates = data.results; else state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0};
+        // 1. Döviz Verilerini Çek
+        const res = await fetch('/api/forex'); 
+        const data = await res.json(); 
+        
+        if(data.results) {
+            state.rates = data.results; 
+        } else {
+            // Forex API çalışmazsa manuel kurlar
+            state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'GBP': 0.77};
+        }
+
+        // 2. Altın/Gümüş Verilerini Çek veya Manuel Tanımla
         try {
-            const goldRes = await fetch('/api/gold'); const goldData = await goldRes.json();
-            if(goldData.XAU) { state.rates['XAU'] = 1 / goldData.XAU; state.rates['XAG'] = 1 / goldData.XAG; }
-        } catch (e) { state.rates['XAU'] = 1/2650; state.rates['XAG'] = 1/31; }
-    } catch(e) { state.rates = {'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'XAU': 1/2650, 'XAG': 1/31}; } 
+            const goldRes = await fetch('/api/gold'); 
+            const goldData = await goldRes.json();
+            
+            if(goldData.XAU && goldData.XAU > 0) { 
+                state.rates['XAU'] = 1 / goldData.XAU; 
+                state.rates['XAG'] = 1 / goldData.XAG; 
+            } else {
+                throw new Error("Gold data empty");
+            }
+        } catch (e) { 
+            // API Hatası olursa GÜNCEL fiyatları manuel tanımla (Fallback)
+            state.rates['XAU'] = 1 / 2740; 
+            state.rates['XAG'] = 1 / 32.50; 
+        }
+        
+    } catch(e) { 
+        // Kritik Hata Durumu (Offline Mod)
+        state.rates = {
+            'USD':1, 'EUR':0.92, 'TRY':34.2, 'PLN':4.0, 'GBP':0.77,
+            'XAU': 1/2740, 'XAG': 1/32.50
+        }; 
+    } 
 }
 
-// --- GRAFİK AÇMA (SABİT AI BUTONU) ---
+// --- FİYAT HESAPLAMA (GÜNCELLENDİ: ALTIN KORUMASI) ---
+function getPrice(code) { 
+    let rateCode = state.rates[code]; 
+    
+    // Eğer kur listede yoksa (Undefined ise)
+    if(!rateCode) { 
+        // Kripto Emniyet Fiyatları
+        if(code==='BTC') rateCode = 1/97000; 
+        else if(code==='ETH') rateCode = 1/2700; 
+        else if(code==='SOL') rateCode = 1/175; 
+        else if(code==='XRP') rateCode = 1/2.40; 
+        
+        // EMTİA (ALTIN/GÜMÜŞ) Emniyet Fiyatları
+        else if(code==='XAU') rateCode = 1/2740; // Altın bulunamazsa $2740 say
+        else if(code==='XAG') rateCode = 1/32.50; // Gümüş bulunamazsa $32.50 say
+        
+        // Hiçbiri değilse 1 kabul et (USD gibi davran)
+        else rateCode = 1; 
+    } 
+    
+    // Formül: (1 / Hedef Kur) * Baz Kur
+    return (1 / rateCode) * state.rates[state.baseCurrency]; 
+}
+
+// --- GRAFİK AÇMA ---
 function openChartModal(symbol) {
     let modal = document.getElementById('tv-modal');
     if(modal) modal.remove();
@@ -203,10 +253,8 @@ function openProAIChat(symbol) {
     document.body.appendChild(chatModal);
     lucide.createIcons();
     
-    // Otomatik İlk Mesaj (İngilizce Başlar, kullanıcıya göre değişir)
     addProMessage(`Grafer Pro AI: Ready! Analyzing ${symbol}...`, 'bot', true);
     
-    // AI'ya istek at
     const prompt = `${symbol} (Price: ${price}) technical analysis.`;
     askOpenAI(prompt, true);
 }
@@ -231,9 +279,7 @@ async function askOpenAI(message, isInitial) {
         const res = await fetch('/api/ai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                message: message // Sadece mesajı gönderiyoruz, dili AI çözecek
-            })
+            body: JSON.stringify({ message: message })
         });
         const data = await res.json();
         
@@ -292,18 +338,6 @@ function setTheme(color) {
 
 function updateUI() { updateBaseCurrencyUI(); updateConverterUI(); renderGrid(); renderCryptoGrid(); renderPortfolio(); }
 function getFlagUrl(code) { return FLAG_MAP[code] ? `https://flagcdn.com/w80/${FLAG_MAP[code]}.png` : null; }
-
-function getPrice(code) { 
-    let rateCode = state.rates[code]; 
-    if(!rateCode) { 
-        if(code==='BTC') rateCode = 1/65000; 
-        else if(code==='ETH') rateCode = 1/3500; 
-        else if(code==='SOL') rateCode = 1/140; 
-        else if(code==='XRP') rateCode = 1/0.60; 
-        else rateCode = 1; 
-    } 
-    return (1 / rateCode) * state.rates[state.baseCurrency]; 
-}
 
 // --- GRAFİK VE SİMÜLASYON ---
 function toggleVSMode() { if(state.vsPair) { state.vsPair = null; document.getElementById('vs-btn').classList.remove('bg-indigo-600', 'text-white'); } else { state.vsPair = 'BTC'; document.getElementById('vs-btn').classList.add('bg-indigo-600', 'text-white'); } initChart('mainChart', state.theme); startLiveSimulations(); }
@@ -366,7 +400,7 @@ function startLiveSimulations() {
     document.getElementById('crypto-chart-icon').src = `https://assets.coincap.io/assets/icons/${CRYPTO_ICONS[state.cryptoChartPair]||'btc'}@2x.png`;
 }
 
-// --- MENÜ VE PORTFÖY İŞLEMLERİ (AYNI) ---
+// --- MENÜ VE PORTFÖY İŞLEMLERİ ---
 function openSelector(mode) {
     state.drawerMode = mode; document.getElementById('selector-drawer').classList.remove('hidden'); setTimeout(() => document.getElementById('drawer-panel').classList.remove('translate-y-full'), 10);
     const list = document.getElementById('drawer-list'); let items = []; let activeList = []; 
