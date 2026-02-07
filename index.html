@@ -12,6 +12,10 @@
     
     <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';</script>
+
     <link rel="stylesheet" href="style.css">
     
     <script>
@@ -244,29 +248,29 @@
         <h2 class="text-2xl font-bold mb-5 text-slate-800 dark:text-white" data-i18n="tools">Araçlar</h2>
         
         <div id="tools-menu" class="grid grid-cols-2 gap-3">
-            <div onclick="openTool('loan')" class="bg-white dark:bg-cardDark p-5 rounded-2xl shadow-sm active:scale-95 transition cursor-pointer border border-slate-100 dark:border-white/5">
-                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3 text-blue-600 dark:text-blue-400">
-                    <i data-lucide="calculator" size="20"></i>
+            <div onclick="openTool('loan')" class="bg-white dark:bg-cardDark p-5 rounded-2xl shadow-sm active:scale-95 transition cursor-pointer border border-slate-100 dark:border-white/5 flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3 text-blue-600 dark:text-blue-400">
+                    <i data-lucide="calculator" size="24"></i>
                 </div>
-                <h3 class="font-bold text-slate-800 dark:text-white">Kredi Hesapla</h3>
+                <h3 class="font-bold text-slate-800 dark:text-white" data-i18n="loan_calc">Kredi Hesapla</h3>
                 <p class="text-xs text-slate-400 mt-1">Aylık taksit & faiz</p>
             </div>
             
-            <div onclick="openTool('translate')" class="bg-white dark:bg-cardDark p-5 rounded-2xl shadow-sm active:scale-95 transition cursor-pointer border border-slate-100 dark:border-white/5 neon-box">
-                <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-3 text-indigo-600 dark:text-indigo-400">
-                    <i data-lucide="languages" size="20"></i>
+            <div onclick="openTool('translate')" class="bg-white dark:bg-cardDark p-5 rounded-2xl shadow-sm active:scale-95 transition cursor-pointer border border-slate-100 dark:border-white/5 neon-box flex flex-col items-center text-center">
+                <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-3 text-indigo-600 dark:text-indigo-400">
+                    <i data-lucide="languages" size="24"></i>
                 </div>
-                <h3 class="font-bold text-slate-800 dark:text-white">Grafer Translate</h3>
+                <h3 class="font-bold text-slate-800 dark:text-white" data-i18n="translator">Grafer Translate</h3>
                 <p class="text-xs text-slate-400 mt-1">DeepL AI + Kamera</p>
             </div>
         </div>
 
         <div id="tool-loan" class="hidden tool-container">
             <button onclick="closeTool()" class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
-                <i data-lucide="arrow-left" size="16"></i> Geri
+                <i data-lucide="arrow-left" size="16"></i> <span data-i18n="back">Geri</span>
             </button>
             <div class="bg-white dark:bg-cardDark rounded-2xl p-5 shadow-sm neon-box">
-                <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white">Kredi Hesaplayıcı</h3>
+                <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-white" data-i18n="loan_calc">Kredi Hesaplayıcı</h3>
                 <div class="space-y-4">
                     <div><label class="text-xs font-bold text-slate-400 uppercase">Kredi Tutarı</label><input type="number" id="loan-amount" class="w-full bg-slate-50 dark:bg-white/5 p-3 rounded-xl font-bold outline-none border border-transparent focus:border-blue-500 transition text-slate-800 dark:text-white" placeholder="100000"></div>
                     <div class="flex gap-3"><div class="flex-1"><label class="text-xs font-bold text-slate-400 uppercase">Faiz (%)</label><input type="number" id="loan-rate" class="w-full bg-slate-50 dark:bg-white/5 p-3 rounded-xl font-bold outline-none border border-transparent focus:border-blue-500 transition text-slate-800 dark:text-white" placeholder="3.50"></div><div class="flex-1"><label class="text-xs font-bold text-slate-400 uppercase">Vade (Ay)</label><input type="number" id="loan-months" class="w-full bg-slate-50 dark:bg-white/5 p-3 rounded-xl font-bold outline-none border border-transparent focus:border-blue-500 transition text-slate-800 dark:text-white" placeholder="12"></div></div>
@@ -283,18 +287,18 @@
                 <button onclick="closeTool()" class="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
                     <i data-lucide="arrow-left" size="20"></i>
                 </button>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Grafer Translate AI</h3>
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="translator">Grafer Translate AI</h3>
                 <div class="w-5"></div>
             </div>
             
             <div class="bg-white dark:bg-cardDark rounded-3xl p-1 shadow-lg neon-box relative overflow-hidden">
                 <div class="flex items-center justify-between bg-slate-50 dark:bg-white/5 p-2 rounded-t-3xl border-b border-slate-100 dark:border-white/5">
                     <select id="lang-source" class="bg-transparent text-slate-800 dark:text-white font-bold text-sm outline-none cursor-pointer w-1/3 text-center appearance-none">
-                        <option value="AUTO">Otomatik</option><option value="TR">Türkçe</option><option value="EN">English</option><option value="DE">Deutsch</option><option value="FR">Français</option><option value="RU">Russian</option><option value="AR">Arabic</option>
+                        <option value="auto">Auto</option>
                     </select>
                     <button onclick="swapLanguages()" class="p-2 rounded-full bg-white dark:bg-white/10 shadow-sm hover:rotate-180 transition text-indigo-600 dark:text-indigo-400"><i data-lucide="arrow-right-left" size="16"></i></button>
                     <select id="lang-target" class="bg-transparent text-indigo-600 dark:text-indigo-400 font-bold text-sm outline-none cursor-pointer w-1/3 text-center appearance-none">
-                        <option value="EN">English</option><option value="TR">Türkçe</option><option value="DE">Deutsch</option><option value="FR">Français</option><option value="ES">Español</option><option value="RU">Russian</option><option value="ZH">Chinese</option>
+                        <option value="en">English</option>
                     </select>
                 </div>
 
@@ -307,11 +311,11 @@
                         </div>
                         <button onclick="document.getElementById('trans-input').value = ''" class="text-xs font-bold text-slate-400 hover:text-red-500 uppercase">Temizle</button>
                     </div>
-                    <input type="file" id="img-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                    <input type="file" id="img-upload" accept="image/*,.pdf,.docx" class="hidden" onchange="handleImageUpload(event)">
                 </div>
 
                 <div class="p-3 grid grid-cols-2 gap-3 border-t border-slate-100 dark:border-white/5">
-                    <button onclick="doTranslate('deepl')" class="bg-slate-800 dark:bg-slate-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-900 transition shadow-lg"><i data-lucide="languages" size="18"></i> Hızlı Çevir</button>
+                    <button onclick="doTranslate('google')" class="bg-slate-800 dark:bg-slate-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-900 transition shadow-lg"><i data-lucide="languages" size="18"></i> Hızlı Çevir</button>
                     <button onclick="doTranslate('ai')" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition shadow-lg shadow-indigo-500/30"><i data-lucide="sparkles" size="18"></i> AI Çeviri</button>
                 </div>
 
@@ -325,7 +329,7 @@
 
                 <div id="ocr-loading" class="hidden absolute inset-0 bg-white/95 dark:bg-cardDark/95 z-50 flex flex-col items-center justify-center">
                     <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-                    <p class="font-bold text-slate-600 dark:text-slate-300">Görsel Okunuyor...</p>
+                    <p class="font-bold text-slate-600 dark:text-slate-300">İşleniyor...</p>
                 </div>
             </div>
         </div>
