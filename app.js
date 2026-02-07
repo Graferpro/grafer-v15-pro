@@ -10,7 +10,7 @@ const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':
 const I18N = {
     en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing...", enter_amount: "Enter Amount...", result: "RESULT", quantity_title: "Quantity", tools: "Tools", loan_calc: "Loan Calc", translator: "Translator", back: "Back", loan_amount: "Loan Amount", interest_rate: "Interest (%)", term_months: "Term (Months)", calculate: "CALCULATE", monthly_payment: "Monthly Payment", total_payment: "Total Payment", fast_translate: "Fast Translate", ai_translate: "AI Translate", clear: "CLEAR", auto: "Auto" },
     tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor...", enter_amount: "Miktarı Girin...", result: "SONUÇ", quantity_title: "Miktar", tools: "Araçlar", loan_calc: "Kredi Hesapla", translator: "Çevirici", back: "Geri", loan_amount: "Kredi Tutarı", interest_rate: "Faiz (%)", term_months: "Vade (Ay)", calculate: "HESAPLA", monthly_payment: "Aylık Taksit", total_payment: "Toplam Ödeme", fast_translate: "Hızlı Çevir", ai_translate: "AI Çeviri", clear: "TEMİZLE", auto: "Otomatik" },
-    // ... Diğer dilleri buraya ekleyebilirsin (yer kaplamasın diye kısalttım) ...
+    // ... Diğer diller ...
 };
 
 // HABERLER
@@ -70,20 +70,10 @@ async function detectLocationCurrency() {
 
     // --- 6. KUTUYU DOLDURMA MANTIĞI ---
     // Listemiz: XAU, XAG, USD, EUR, GBP (5 tane sabit)
-    // 6. sıraya kullanıcının ana para birimini koymayalım (çünkü 1 = 1 olur).
-    // Onun yerine, eğer ana para birimi listede yoksa onu ekleyelim, varsa popüler başka bir şey (örn. JPY veya BTC) ekleyelim.
-    
-    // Temiz bir liste yapalım
     let newFavs = ['XAU', 'XAG', 'USD', 'EUR', 'GBP'];
     
     // Eğer baseCurrency (örn: TRY) bu listede varsa, onu listeden çıkarıp yerine başkasını koymalıyız
     // Çünkü "TRY/TRY = 1" görmek saçma olur.
-    
-    // Eğer kullanıcının parası TRY ise ve listede yoksa, ekle.
-    if (!newFavs.includes(state.baseCurrency)) {
-       // Listeye ekleme yapmıyoruz çünkü Base Currency zaten karşılaştırma bazımız.
-       // Grid fonksiyonunda base currency'i otomatik filtrelicez.
-    }
     
     // 6. Eleman olarak, kullanıcının bölgesine göre değil, listede olmayan popüler bir şey ekleyelim.
     if(state.baseCurrency !== 'JPY' && !newFavs.includes('JPY')) newFavs.push('JPY');
@@ -163,5 +153,4 @@ function setTheme(color) { state.theme = color; localStorage.setItem('theme', co
 function toggleLangMenu() { document.getElementById('lang-dropdown').classList.toggle('hidden'); }
 function nav(p) { document.querySelectorAll('.page-section').forEach(x=>x.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); }
 function toggleSidebar() { const s = document.getElementById('sidebar'); s.style.transform = s.style.transform === 'translateX(0px)' ? 'translateX(-100%)' : 'translateX(0px)'; document.getElementById('overlay').classList.toggle('hidden'); }
-// ... (Diğer Crypto, Portföy, Converter fonksiyonları v2.6 ile aynı kalacak) ...
-// Eğer tam kodu istersen, kalan kısımları da ekleyip tek parça atabilirim.
+// ... (Kalan Portföy ve Crypto fonksiyonları için önceki attığın koddan kopyalayabilirsin, değişen bir şey yok) ...
