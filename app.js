@@ -6,7 +6,7 @@ const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'C
 const CURRENCY_NAMES = {'USD':'Dollar', 'EUR':'Euro', 'GBP':'Pound', 'TRY':'Lira', 'PLN':'Złoty', 'JPY':'Yen', 'RUB':'Ruble', 'GEL':'Lari', 'XAU':'Ons Altın', 'XAG':'Ons Gümüş'};
 const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
 
-// DİL DESTEĞİ (ARAÇLAR MENÜSÜ EKLENDİ)
+// DİL DESTEĞİ (FULL SÜRÜM)
 const I18N = {
     en: { 
         dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", 
@@ -14,7 +14,10 @@ const I18N = {
         theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", 
         ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing...",
         enter_amount: "Enter Amount...", result: "RESULT", quantity_title: "Quantity",
-        tools: "Tools", loan_calc: "Loan Calc", translator: "Translator", back: "Back" // YENİ EKLENENLER
+        tools: "Tools", loan_calc: "Loan Calc", translator: "Translator", back: "Back",
+        loan_amount: "Loan Amount", interest_rate: "Interest (%)", term_months: "Term (Months)", calculate: "CALCULATE",
+        monthly_payment: "Monthly Payment", total_payment: "Total Payment",
+        fast_translate: "Fast Translate", ai_translate: "AI Translate", clear: "CLEAR", auto: "Auto"
     },
     tr: { 
         dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", 
@@ -22,7 +25,10 @@ const I18N = {
         theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", 
         ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor...",
         enter_amount: "Miktarı Girin...", result: "SONUÇ", quantity_title: "Miktar",
-        tools: "Araçlar", loan_calc: "Kredi Hesapla", translator: "Çevirici", back: "Geri" // YENİ EKLENENLER
+        tools: "Araçlar", loan_calc: "Kredi Hesapla", translator: "Çevirici", back: "Geri",
+        loan_amount: "Kredi Tutarı", interest_rate: "Faiz (%)", term_months: "Vade (Ay)", calculate: "HESAPLA",
+        monthly_payment: "Aylık Taksit", total_payment: "Toplam Ödeme",
+        fast_translate: "Hızlı Çevir", ai_translate: "AI Çeviri", clear: "TEMİZLE", auto: "Otomatik"
     },
     pl: { 
         dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", 
@@ -30,7 +36,10 @@ const I18N = {
         theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", 
         ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie...",
         enter_amount: "Wpisz kwotę...", result: "WYNIK", quantity_title: "Ilość",
-        tools: "Narzędzia", loan_calc: "Kalkulator Kredytowy", translator: "Tłumacz", back: "Wstecz" // YENİ EKLENENLER
+        tools: "Narzędzia", loan_calc: "Kalkulator Kredytowy", translator: "Tłumacz", back: "Wstecz",
+        loan_amount: "Kwota Kredytu", interest_rate: "Oprocentowanie", term_months: "Miesiące", calculate: "OBLICZ",
+        monthly_payment: "Miesięczna Rata", total_payment: "Całkowita Płatność",
+        fast_translate: "Szybkie Tłumaczenie", ai_translate: "Tłumaczenie AI", clear: "WYCZYŚĆ", auto: "Automatyczny"
     },
     ru: { 
         dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", 
@@ -38,7 +47,10 @@ const I18N = {
         theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", 
         ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ...",
         enter_amount: "Введите сумму...", result: "РЕЗУЛЬТАТ", quantity_title: "Количество",
-        tools: "Инструменты", loan_calc: "Кредитный калькулятор", translator: "Переводчик", back: "Назад" // YENİ EKLENENLER
+        tools: "Инструменты", loan_calc: "Кредитный калькулятор", translator: "Переводчик", back: "Назад",
+        loan_amount: "Сумма кредита", interest_rate: "Процент (%)", term_months: "Срок (мес)", calculate: "РАССЧИТАТЬ",
+        monthly_payment: "Ежемесячный платеж", total_payment: "Итоговая выплата",
+        fast_translate: "Быстрый перевод", ai_translate: "AI Перевод", clear: "ОЧИСТИТЬ", auto: "Авто"
     },
     ka: { 
         dark_mode: "ღამის რეჟიმი", dashboard: "ბაზარი", portfolio: "პორტფოლიო", crypto: "კრიპტო", converter: "კონვერტერი", settings: "პარამეტრები", 
@@ -46,9 +58,13 @@ const I18N = {
         theme_color: "თემის ფერი", default_currency: "ნაგულისხმევი ვალუტა", ai_analysis: "AI ანალიზი", 
         ai_title: "Grafer Pro AI ასისტენტი", ai_subtitle: "ბაზრის ანალიზი", close: "დახურვა", analyzing: "ანალიზი...",
         enter_amount: "შეიყვანეთ თანხა...", result: "შედეგი", quantity_title: "რაოდენობა",
-        tools: "ინსტრუმენტები", loan_calc: "სესხის კალკულატორი", translator: "მთარგმნელი", back: "უკან" // YENİ EKLENENLER
+        tools: "ინსტრუმენტები", loan_calc: "სესხის კალკულატორი", translator: "მთარგმნელი", back: "უკან",
+        loan_amount: "სესხის თანხა", interest_rate: "პროცენტი (%)", term_months: "ვადა (თვე)", calculate: "გამოთვლა",
+        monthly_payment: "ყოველთვიური გადასახადი", total_payment: "სულ გადასახადი",
+        fast_translate: "სწრაფი თარგმნა", ai_translate: "AI თარგმნა", clear: "გასუფთავება", auto: "ავტომატური"
     }
 };
+
 
 const FALLBACK_NEWS = {
     en: [{text: "Global markets update."}, {text: "Bitcoin holds strong."}, {text: "Gold prices fluctuating."}, {text: "Grafer Pro v2.6 Live."}],
