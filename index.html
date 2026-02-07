@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
     <link rel="stylesheet" href="style.css">
     
     <script>
@@ -281,18 +282,36 @@
             <div class="bg-white dark:bg-cardDark rounded-2xl p-5 shadow-sm neon-box relative overflow-hidden">
                 <div class="flex justify-between mb-4">
                     <select id="trans-target" class="bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white font-bold text-sm p-2 rounded-lg outline-none">
-                        <option value="EN">English</option><option value="TR">Türkçe</option><option value="DE">Deutsch</option><option value="FR">Français</option><option value="ES">Español</option><option value="RU">Russian</option>
+                        <option value="EN">English</option><option value="TR">Türkçe</option><option value="DE">Deutsch</option><option value="FR">Français</option><option value="ES">Español</option><option value="RU">Russian</option><option value="PL">Polski</option>
                     </select>
-                    <div class="text-indigo-500 animate-pulse"><i data-lucide="bot" size="20"></i></div>
+                    <div class="text-indigo-500 animate-pulse"><i data-lucide="bot" size="24"></i></div>
                 </div>
-                <div class="relative">
-                    <textarea id="trans-input" rows="3" placeholder="Metni girin veya konuşun..." class="w-full bg-slate-50 dark:bg-white/5 rounded-xl p-4 pr-12 text-slate-800 dark:text-white outline-none border border-transparent focus:border-indigo-500 transition resize-none"></textarea>
-                    <button onclick="toggleSpeech()" id="mic-btn" class="absolute right-3 bottom-3 p-2 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition"><i data-lucide="mic" size="20"></i></button>
+                
+                <div class="relative group">
+                    <textarea id="trans-input" rows="4" placeholder="Metin yazın, konuşun veya fotoğraf çekin..." class="w-full bg-slate-50 dark:bg-white/5 rounded-2xl p-4 pb-14 text-slate-800 dark:text-white outline-none border-2 border-transparent focus:border-indigo-500/50 transition resize-none font-medium"></textarea>
+                    <div class="absolute right-3 bottom-3 flex gap-2">
+                        <button onclick="triggerCamera()" class="p-2.5 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition active:scale-90" title="Fotoğraf Çek"><i data-lucide="camera" size="20"></i></button>
+                        <button onclick="toggleSpeech()" id="mic-btn" class="p-2.5 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-500 transition active:scale-90" title="Sesli Yaz"><i data-lucide="mic" size="20"></i></button>
+                    </div>
+                    <input type="file" id="img-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
                 </div>
-                <button onclick="doTranslate()" class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-down-up" size="18"></i> Çevir / Translate</button>
-                <div id="trans-result-box" class="hidden mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
-                    <div class="flex justify-between items-start"><p id="trans-output" class="text-lg font-medium text-slate-800 dark:text-white leading-relaxed">...</p><button onclick="speakText()" class="p-2 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-white/10 rounded-full transition"><i data-lucide="volume-2" size="20"></i></button></div>
-                    <p class="text-[10px] text-right text-slate-300 mt-2">Powered by DeepL</p>
+
+                <div id="ocr-loading" class="hidden absolute inset-0 bg-white/90 dark:bg-cardDark/90 z-20 flex flex-col items-center justify-center backdrop-blur-sm">
+                    <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
+                    <p class="text-sm font-bold text-indigo-600 animate-pulse">Görsel Okunuyor...</p>
+                </div>
+
+                <button onclick="doTranslate()" class="w-full mt-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 active:scale-95"><i data-lucide="arrow-down-up" size="18"></i> Çevir / Translate</button>
+                
+                <div id="trans-result-box" class="hidden mt-5 pt-5 border-t border-dashed border-slate-200 dark:border-white/10 animate-fade-in-up">
+                    <div class="flex justify-between items-start gap-3">
+                        <p id="trans-output" class="text-lg font-medium text-slate-800 dark:text-white leading-relaxed">...</p>
+                        <button onclick="speakText()" class="shrink-0 p-2 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-white/10 rounded-full transition active:scale-90"><i data-lucide="volume-2" size="22"></i></button>
+                    </div>
+                    <div class="flex justify-between items-center mt-3">
+                        <button onclick="copyToClipboard()" class="text-[10px] font-bold text-slate-400 hover:text-indigo-500 transition flex items-center gap-1"><i data-lucide="copy" size="12"></i> Kopyala</button>
+                        <p class="text-[10px] text-slate-300">Powered by DeepL & Tesseract</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -364,5 +383,6 @@
     
     <script src="app.js"></script>
     <script src="tools.js"></script>
+    <script src="translate.js"></script>
 </body>
 </html>
