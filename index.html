@@ -22,6 +22,37 @@
             }
         }
     </script>
+
+    <style>
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            height: 40px;
+            background-color: #0f172a;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 30;
+        }
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
 </head>
 <body class="bg-[#F8F9FE] text-slate-900 dark:bg-darkBg dark:text-white pb-24 transition-colors duration-300">
 
@@ -115,7 +146,7 @@
             <div class="h-[200px] w-full relative">
                 <canvas id="mainChart"></canvas>
             </div>
-            </div>
+        </div>
         <div class="flex justify-between items-end mb-3 px-1">
             <h3 class="font-bold text-lg text-slate-800 dark:text-white" data-i18n="market">Piyasa</h3>
             <button onclick="openSelector('grid')" class="text-xs font-bold flex items-center gap-1 bg-white dark:bg-white/5 px-3 py-1.5 rounded-full hover:shadow-sm transition border border-gray-100 dark:border-transparent" style="color:var(--theme-color)">
@@ -171,7 +202,7 @@
         <div class="bg-white dark:bg-cardDark rounded-[2.5rem] p-6 neon-box relative shadow-float">
             <div class="mb-8 relative">
                 <label class="text-[11px] font-bold text-slate-400 tracking-wider mb-2 block uppercase">Miktar</label>
-                <input type="number" id="conv-amount" value="100" class="w-full bg-transparent text-5xl font-bold text-slate-900 dark:text-white outline-none border-b border-slate-200 dark:border-slate-700 pb-2 focus:border-indigo-500 transition-colors font-sans" oninput="convert()">
+                <input type="number" id="conv-amount" class="w-full bg-transparent text-5xl font-bold text-slate-900 dark:text-white outline-none border-b border-slate-200 dark:border-slate-700 pb-2 focus:border-indigo-500 transition-colors font-sans" oninput="convert()">
             </div>
             <div class="flex items-center justify-between gap-2 mb-8 relative">
                 <div class="w-[45%]">
@@ -197,10 +228,10 @@
                 </div>
             </div>
             <div class="bg-[#EEF2FF] dark:bg-indigo-900/20 p-6 rounded-[1.5rem] text-center border border-indigo-50 dark:border-white/5">
-                <p class="text-[10px] font-bold text-indigo-400 mb-2 tracking-widest uppercase">SONUÇ</p>
+                <p class="text-[10px] font-bold text-indigo-400 mb-2 tracking-widest uppercase" data-i18n="result">SONUÇ</p>
                 <p id="conv-result" class="text-3xl font-bold text-indigo-600 dark:text-indigo-300">---</p>
             </div>
-            <button onclick="document.getElementById('conv-amount').value = 0; convert();" class="w-full mt-2 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-white transition uppercase tracking-widest">Sıfırla</button>
+            <button onclick="document.getElementById('conv-amount').value = ''; convert();" class="w-full mt-2 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-white transition uppercase tracking-widest" data-i18n="reset">Sıfırla</button>
         </div>
     </main>
 
