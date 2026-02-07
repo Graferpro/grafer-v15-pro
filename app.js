@@ -6,13 +6,48 @@ const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'C
 const CURRENCY_NAMES = {'USD':'Dollar', 'EUR':'Euro', 'GBP':'Pound', 'TRY':'Lira', 'PLN':'Złoty', 'JPY':'Yen', 'RUB':'Ruble', 'GEL':'Lari', 'XAU':'Ons Altın', 'XAG':'Ons Gümüş'};
 const CRYPTO_ICONS = {'BTC':'btc', 'ETH':'eth', 'SOL':'sol', 'XRP':'xrp', 'ADA':'ada', 'DOGE':'doge', 'DOT':'dot', 'MATIC':'matic', 'LTC':'ltc', 'AVAX':'avax'};
 
-// DİL DESTEĞİ
+// DİL DESTEĞİ (ARAÇLAR MENÜSÜ EKLENDİ)
 const I18N = {
-    en: { dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing...", enter_amount: "Enter Amount...", result: "RESULT", quantity_title: "Quantity" },
-    tr: { dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor...", enter_amount: "Miktarı Girin...", result: "SONUÇ", quantity_title: "Miktar" },
-    pl: { dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "Reset", crypto_assets: "Aktywa Krypto", theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie...", enter_amount: "Wpisz kwotę...", result: "WYNIK", quantity_title: "Ilość" },
-    ru: { dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "Сброс", crypto_assets: "Криптоактивы", theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ...", enter_amount: "Введите сумму...", result: "РЕЗУЛЬТАТ", quantity_title: "Количество" },
-    ka: { dark_mode: "ღამის რეჟიმი", dashboard: "ბაზარი", portfolio: "პორტფოლიო", crypto: "კრიპტო", converter: "კონვერტერი", settings: "პარამეტრები", market: "ბაზარი", edit: "რედაქტირება", total_asset: "სულ აქტივები", add: "დამატება", reset: "განულება", crypto_assets: "კრიპტო აქტივები", theme_color: "თემის ფერი", default_currency: "ნაგულისხმევი ვალუტა", ai_analysis: "AI ანალიზი", ai_title: "Grafer Pro AI ასისტენტი", ai_subtitle: "ბაზრის ანალიზი", close: "დახურვა", analyzing: "ანალიზი...", enter_amount: "შეიყვანეთ თანხა...", result: "შედეგი", quantity_title: "რაოდენობა" }
+    en: { 
+        dark_mode: "Dark Mode", dashboard: "Market", portfolio: "Portfolio", crypto: "Crypto", converter: "Converter", settings: "Settings", 
+        market: "Market", edit: "Edit", total_asset: "TOTAL ASSETS", add: "Add", reset: "Reset", crypto_assets: "Crypto Assets", 
+        theme_color: "Theme Color", default_currency: "Default Currency", ai_analysis: "AI Analysis", 
+        ai_title: "Grafer Pro Ai Assistant", ai_subtitle: "Market Analysis", close: "Close", analyzing: "Analyzing...",
+        enter_amount: "Enter Amount...", result: "RESULT", quantity_title: "Quantity",
+        tools: "Tools", loan_calc: "Loan Calc", translator: "Translator", back: "Back" // YENİ EKLENENLER
+    },
+    tr: { 
+        dark_mode: "Gece Modu", dashboard: "Piyasa", portfolio: "Portföy", crypto: "Kripto", converter: "Çevirici", settings: "Ayarlar", 
+        market: "Piyasa", edit: "Düzenle", total_asset: "TOPLAM VARLIK", add: "Ekle", reset: "Sıfırla", crypto_assets: "Kripto Varlıklar", 
+        theme_color: "Tema Rengi", default_currency: "Varsayılan Para Birimi", ai_analysis: "AI Analiz", 
+        ai_title: "Grafer Pro Ai Asistan", ai_subtitle: "Piyasa Analizi", close: "Kapat", analyzing: "Analiz ediliyor...",
+        enter_amount: "Miktarı Girin...", result: "SONUÇ", quantity_title: "Miktar",
+        tools: "Araçlar", loan_calc: "Kredi Hesapla", translator: "Çevirici", back: "Geri" // YENİ EKLENENLER
+    },
+    pl: { 
+        dark_mode: "Tryb ciemny", dashboard: "Rynek", portfolio: "Portfel", crypto: "Krypto", converter: "Przelicznik", settings: "Ustawienia", 
+        market: "Rynek", edit: "Edytuj", total_asset: "AKTYWA OGÓŁEM", add: "Dodaj", reset: "Reset", crypto_assets: "Aktywa Krypto", 
+        theme_color: "Kolor motywu", default_currency: "Domyślna Waluta", ai_analysis: "Analiza AI", 
+        ai_title: "Grafer Pro Ai Asystent", ai_subtitle: "Analiza Rynkowa", close: "Zamknij", analyzing: "Analizowanie...",
+        enter_amount: "Wpisz kwotę...", result: "WYNIK", quantity_title: "Ilość",
+        tools: "Narzędzia", loan_calc: "Kalkulator Kredytowy", translator: "Tłumacz", back: "Wstecz" // YENİ EKLENENLER
+    },
+    ru: { 
+        dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", 
+        market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "Сброс", crypto_assets: "Криптоактивы", 
+        theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", 
+        ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ...",
+        enter_amount: "Введите сумму...", result: "РЕЗУЛЬТАТ", quantity_title: "Количество",
+        tools: "Инструменты", loan_calc: "Кредитный калькулятор", translator: "Переводчик", back: "Назад" // YENİ EKLENENLER
+    },
+    ka: { 
+        dark_mode: "ღამის რეჟიმი", dashboard: "ბაზარი", portfolio: "პორტფოლიო", crypto: "კრიპტო", converter: "კონვერტერი", settings: "პარამეტრები", 
+        market: "ბაზარი", edit: "რედაქტირება", total_asset: "სულ აქტივები", add: "დამატება", reset: "განულება", crypto_assets: "კრიპტო აქტივები", 
+        theme_color: "თემის ფერი", default_currency: "ნაგულისხმევი ვალუტა", ai_analysis: "AI ანალიზი", 
+        ai_title: "Grafer Pro AI ასისტენტი", ai_subtitle: "ბაზრის ანალიზი", close: "დახურვა", analyzing: "ანალიზი...",
+        enter_amount: "შეიყვანეთ თანხა...", result: "შედეგი", quantity_title: "რაოდენობა",
+        tools: "ინსტრუმენტები", loan_calc: "სესხის კალკულატორი", translator: "მთარგმნელი", back: "უკან" // YENİ EKLENENLER
+    }
 };
 
 const FALLBACK_NEWS = {
