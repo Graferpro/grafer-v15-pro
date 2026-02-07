@@ -1,5 +1,5 @@
-// --- VERSİYON (NEWS UPDATE) ---
-const APP_VERSION = '2.3'; 
+// --- VERSİYON (NEWS LINK UPDATE) ---
+const APP_VERSION = '2.4'; 
 
 // --- SABİT VERİLER ---
 const FLAG_MAP = {'USD':'us', 'EUR':'eu', 'GBP':'gb', 'TRY':'tr', 'JPY':'jp', 'CNY':'cn', 'RUB':'ru', 'CHF':'ch', 'CAD':'ca', 'AUD':'au', 'PLN':'pl', 'SEK':'se', 'NOK':'no', 'DKK':'dk', 'BRL':'br', 'INR':'in', 'MXN':'mx', 'KRW':'kr', 'IDR':'id', 'ZAR':'za', 'SAR':'sa', 'AED':'ae', 'GEL':'ge'};
@@ -14,9 +14,9 @@ const I18N = {
     ru: { dark_mode: "Темная тема", dashboard: "Рынок", portfolio: "Портфель", crypto: "Крипто", converter: "Конвертер", settings: "Настройки", market: "Рынок", edit: "Изменить", total_asset: "ВСЕГО АКТИВОВ", add: "Добавить", reset: "Сброс", crypto_assets: "Криптоактивы", theme_color: "Цвет темы", default_currency: "Валюта по умолчанию", ai_analysis: "AI Анализ", ai_title: "Grafer Pro Ai Помощник", ai_subtitle: "Технический анализ", close: "Закрыть", analyzing: "Анализ..." }
 };
 
-// YEDEK HABERLER (Eğer API çalışmazsa bunlar görünür)
+// YEDEK HABERLER (Eğer API çalışmazsa bunlar görünür - Linksiz)
 const FALLBACK_NEWS = [
-    "Global markets update.", "Bitcoin holds strong.", "Gold prices fluctuating.", "Grafer Pro v2.3 Live."
+    {text: "Global markets update."}, {text: "Bitcoin holds strong."}, {text: "Gold prices fluctuating."}, {text: "Grafer Pro v2.4 Live."}
 ];
 
 // --- STATE ---
@@ -28,7 +28,7 @@ let state = {
     portfolio: JSON.parse(localStorage.getItem('portfolio')) || [],
     drawerMode: '', neonEnabled: localStorage.getItem('neonEnabled') !== 'false', tempAsset: null, convFrom: 'USD', convTo: 'PLN',
     cryptoChartPair: 'BTC',
-    liveNews: [] // Canlı haberler buraya gelecek
+    liveNews: [] 
 };
 let charts = {}; let intervals = {};
 
@@ -58,7 +58,7 @@ window.onload = async () => {
     initChart('cryptoChart', '#f97316');
     
     await fetchData(); 
-    await fetchRealNews(); // HABERLERİ ÇEKMEK İÇİN YENİ FONKSİYON
+    await fetchRealNews(); 
     await detectLocationCurrency(); 
 
     const neonToggle = document.getElementById('neon-toggle'); 
@@ -69,17 +69,18 @@ window.onload = async () => {
     }
 
     if(state.baseCurrency === state.chartPair) state.chartPair = 'EUR';
-    updateUI(); startLiveSimulations(); startNewsTicker(); // Haberleri başlat
+    updateUI(); startLiveSimulations(); startNewsTicker(); 
     
     const tvScript = document.createElement('script'); tvScript.src = 'https://s3.tradingview.com/tv.js'; document.head.appendChild(tvScript);
     document.getElementById('theme-toggle').addEventListener('change', (e) => { document.documentElement.classList.toggle('dark', e.target.checked); });
 };
 
-// --- YENİ HABER FONKSİYONU ---
+// --- HABER FONKSİYONU ---
 async function fetchRealNews() {
     try {
         const res = await fetch('/api/news');
         const data = await res.json();
+        // Artık hem text hem url geliyor
         if (data.news && data.news.length > 0) {
             state.liveNews = data.news;
         } else {
@@ -91,13 +92,19 @@ async function fetchRealNews() {
     }
 }
 
-// --- HABER BANDINI GÜNCELLEME ---
+// --- HABER BANDI (LİNKLİ VERSİYON) ---
 function startNewsTicker() {
     const container = document.getElementById('news-ticker');
-    // Eğer canlı haber geldiyse onu kullan, yoksa yedekleri
     const msgs = state.liveNews.length > 0 ? state.liveNews : FALLBACK_NEWS;
     
-    container.innerHTML = msgs.map(m => `<div class="ticker-item"><span style="color:var(--theme-color)">●</span> ${m}</div>`).join('');
+    container.innerHTML = msgs.map(m => {
+        // Eğer URL varsa <a> etiketi, yoksa <span> veya <div>
+        if(m.url) {
+            return `<a href="${m.url}" target="_blank" class="ticker-item hover:underline cursor-pointer flex items-center gap-2"><span style="color:var(--theme-color)">●</span> ${m.text}</a>`;
+        } else {
+            return `<div class="ticker-item"><span style="color:var(--theme-color)">●</span> ${m.text}</div>`;
+        }
+    }).join('');
 }
 
 // --- KONUMDAN PARA BİRİMİ BULMA ---
@@ -119,7 +126,7 @@ async function detectLocationCurrency() {
     } catch (err) { console.log("Konum alınamadı."); }
 }
 
-// --- API BAĞLANTISI (ALTIN FIX DAHİL) ---
+// --- API BAĞLANTISI ---
 async function fetchData() { 
     try { 
         const res = await fetch('/api/forex'); const data = await res.json(); 
@@ -240,7 +247,7 @@ function setLanguage(lang) {
     state.lang = lang; localStorage.setItem('lang', lang);
     document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if(I18N[lang][key]) el.innerText = I18N[lang][key]; });
     document.getElementById('lang-dropdown').classList.add('hidden'); document.getElementById('lang-dropdown').classList.remove('flex');
-    startNewsTicker(); // Dil değişince ticker'ı yenile
+    startNewsTicker(); 
 }
 function getSymbol(curr) { const symbols = {'PLN':'zł', 'USD':'$', 'EUR':'€', 'TRY':'₺', 'GBP':'£'}; return symbols[curr] || curr; }
 function setTheme(color) {
