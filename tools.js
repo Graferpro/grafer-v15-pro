@@ -1,86 +1,49 @@
-// --- GRAFER TRANSLATE MODÜLÜ ---
+// --- TOOLS YÖNETİCİSİ & BASİT HESAPLAMALAR ---
 
-async function doTranslate() {
-    const text = document.getElementById('trans-input').value;
-    const target = document.getElementById('trans-target').value;
-    const resultBox = document.getElementById('trans-result-box');
-    const outputText = document.getElementById('trans-output');
-
-    if (!text) return;
-
-    // Yükleniyor efekti
-    resultBox.classList.remove('hidden');
-    outputText.innerText = "DeepL Çeviriyor...";
-    outputText.classList.add('animate-pulse');
-
-    try {
-        const res = await fetch('/api/translate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text, target_lang: target })
-        });
-        const data = await res.json();
-
-        outputText.classList.remove('animate-pulse');
-        
-        if (data.translatedText) {
-            outputText.innerText = data.translatedText;
-        } else {
-            outputText.innerText = "Hata: " + (data.error || "Çevrilemedi.");
-        }
-    } catch (e) {
-        outputText.innerText = "Bağlantı hatası.";
-    }
-}
-
-// --- SESLİ OKUMA (TTS) ---
-function speakText() {
-    const text = document.getElementById('trans-output').innerText;
-    const lang = document.getElementById('trans-target').value; // Seçili dil (TR, EN vs.)
+// 1. Menü Açma/Kapama (Navigasyon)
+function openTool(toolName) {
+    // Ana menüyü gizle
+    document.getElementById('tools-menu').classList.add('hidden');
+    // Seçilen aracı göster
+    const toolEl = document.getElementById('tool-' + toolName);
+    if (toolEl) toolEl.classList.remove('hidden');
     
-    if(!text) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    // Dil kodunu ayarla (DeepL 'EN' dönüyor ama tarayıcı 'en-US' ister, basit eşleşme)
-    if(lang === 'TR') utterance.lang = 'tr-TR';
-    else if(lang === 'EN') utterance.lang = 'en-US';
-    else if(lang === 'DE') utterance.lang = 'de-DE';
-    else if(lang === 'FR') utterance.lang = 'fr-FR';
-    else if(lang === 'RU') utterance.lang = 'ru-RU';
-    else if(lang === 'ES') utterance.lang = 'es-ES';
-
-    window.speechSynthesis.speak(utterance);
+    // İkonları yenile (Eğer yüklenmemişse)
+    if(window.lucide) lucide.createIcons();
 }
 
-// --- MİKROFON (Speech-to-Text) ---
-function toggleSpeech() {
-    // Tarayıcı desteği kontrolü
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Tarayıcınız sesli komutu desteklemiyor. (Chrome kullanın)");
+function closeTool() {
+    // Açık olan tüm araç pencerelerini gizle
+    document.querySelectorAll('.tool-container').forEach(el => el.classList.add('hidden'));
+    // Ana menüyü geri getir
+    document.getElementById('tools-menu').classList.remove('hidden');
+}
+
+// 2. Kredi Hesaplama Mantığı
+function calculateLoan() {
+    const amount = parseFloat(document.getElementById('loan-amount').value);
+    const rate = parseFloat(document.getElementById('loan-rate').value);
+    const months = parseFloat(document.getElementById('loan-months').value);
+
+    if (!amount || !rate || !months) {
+        alert("Lütfen tüm alanları doldurun.");
         return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'tr-TR'; // Şimdilik Türkçe dinliyor, istersen ayar ekleriz.
-    recognition.start();
-
-    const micBtn = document.getElementById('mic-btn');
-    micBtn.classList.add('text-red-500', 'animate-pulse'); // Kayıt başladığını göster
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById('trans-input').value = transcript;
-        micBtn.classList.remove('text-red-500', 'animate-pulse');
-        // Otomatik çevirsin mi? İstersen buraya doTranslate() ekle.
-    };
-
-    recognition.onerror = function(event) {
-        micBtn.classList.remove('text-red-500', 'animate-pulse');
-        alert("Ses anlaşılamadı.");
-    };
+    const monthlyRate = rate / 100;
+    let monthlyPayment = 0;
     
-    recognition.onend = function() {
-        micBtn.classList.remove('text-red-500', 'animate-pulse');
-    };
+    if (rate === 0) {
+        monthlyPayment = amount / months;
+    } else {
+        const factor = Math.pow(1 + monthlyRate, months);
+        monthlyPayment = (amount * monthlyRate * factor) / (factor - 1);
+    }
+
+    const totalPayment = monthlyPayment * months;
+
+    document.getElementById('loan-monthly').innerText = monthlyPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById('loan-total').innerText = totalPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    
+    document.getElementById('loan-result').classList.remove('hidden');
 }
